@@ -2,14 +2,21 @@
 from utils.classification_trainer import ClassTrainer
 import argparse
 import os
+
+# Global variable for setting arguments/parameters
 args = None
 
+
+# Brief: Parse arguments
+# Used: __main__
+# Input:
+# Output: arguments instance
 def parse_args():
     parser = argparse.ArgumentParser(description='Train ')
 
     # Parameters used in this program
     parser.add_argument('--model-name', default='UNet_Nested', help='the name of the model')
-    parser.add_argument('--data-name', default='GearKnob', help='the name of the data')
+    parser.add_argument('--dataset-name', default='GearKnob', help='the name of the dataset')
     parser.add_argument('--device', default='1,2,3', help='assign device')
     parser.add_argument('--resume', default="/home/unaguo/proj/meter-una/gearknob_keypoints/weights/UNet_Nested-0927-091214/best_loss-4.561844646930695_model.pth", help='the path of resume training model')
     parser.add_argument('--batch-size', type=int, default=660, help='input batch size.')
@@ -32,24 +39,22 @@ def parse_args():
 
     parser.add_argument('--resume-opt', type=bool, default=True, help='whether to load opt state')
     parser.add_argument('--max-model-num', type=int, default=1, help='most recent models num to save ')
-    parser.add_argument('--rbm-pretrained', type=bool, default=False, help='whether to pretrain with RBM')
 
-
-    # Parameters unused in this program
-    parser.add_argument('--pretrained', type=bool, default=False, help='whether to load pretrained model')
-    parser.add_argument('--fea-dim', type=int, default=512,help='the num of feature dim')
-    parser.add_argument('--margin-s', type=float, default=64.0,help='margin s')
-    parser.add_argument('--margin-m', type=float, default=0.1,help='margin m')
-    parser.add_argument('--embedding-size',type=int, default=128, help='the num of training process')
-
+    parser.add_argument('--visualization', type=bool, default=True, help='Use Visdom check training heatmap or not')
+    parser.add_argument('--visualization', type=bool, default=True, help='Use Visdom check training heatmap or not')
 
     args = parser.parse_args()
     return args
 
 
 if __name__ == '__main__':
+    # Parse arguments
     args = parse_args()
-    os.environ['CUDA_VISIBLE_DEVICES'] = args.device.strip()  # set vis gpu
+
+    # Set visible gpu(s)
+    os.environ['CUDA_VISIBLE_DEVICES'] = args.device.strip()
+
+    # Start training
     trainer = ClassTrainer(args)
     trainer.setup()
     trainer.train()
