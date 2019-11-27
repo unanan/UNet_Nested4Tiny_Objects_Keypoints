@@ -1,11 +1,19 @@
+# * trainer_base.py:
+#   base class template of "Trainer"
+#
+# * Test Status: test ok
+#
+
+# -*- coding: utf-8 -*
 import os
 import logging
 from datetime import datetime
-from utils.logger import setlogger
+from tools.misc.logger import setlogger
 
 
 class TrainerBase(object):
     def __init__(self, args):
+
         sub_dir = args.model_name + '-' + datetime.strftime(datetime.now(), '%m%d-%H%M%S')  # prepare saving path
         self.save_dir = os.path.join(args.save_dir, sub_dir)
 
