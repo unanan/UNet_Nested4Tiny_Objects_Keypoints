@@ -1,4 +1,9 @@
-
+# * trainer.py:
+#   major codes of training & validating process
+# * Inherited from TrainerBase in trainer_base.py
+#
+# * Test Status: Not tested
+#
 
 #-*- coding: utf-8 -*
 import os
@@ -34,7 +39,7 @@ TARGET_SIZE=128
 
 
 
-class ClassTrainer():
+class Trainer():
     '''
     - Training Class, including loading dataset,
         preprocessing, training, validating, etc.
@@ -46,12 +51,12 @@ class ClassTrainer():
 
     def __init__(self, args):
         '''
-        - Construct ClassTrainer & print the settings
+        - Construct Trainer & print the settings
         - Used: Used in train_classifier.py
         :param args: arguments to parse
         '''
 
-        super(ClassTrainer, self).__init__()
+        super(Trainer, self).__init__()
         self.args = args
         self.needVisualize = args.visualize
 
@@ -70,34 +75,45 @@ class ClassTrainer():
     #============================================= Intermediate Functions ==============================================
     #===================================================================================================================
 
-    def visualize_(self,epoch, C,input,target,fin1,fin2,fin3):
+    def visualize_(self, epoch, input, target, out_finlist):
         '''
         - Visualize the heatmap on Visdom
         - Used: Used in function "train_epoch_"
-        :param epoch:
-        :param C:
-        :param input:
-        :param target:
-        :param fin1:
-        :param fin2:
-        :param fin3:
+        :param epoch:  Epoch index, showed in the heatmaps' title
+        :param input:  Input data batch
+        :param target: Target heatmap batch
+        :param out_finlist: Output heatmap batch list after training
         :return:
         '''
 
         assert viz.check_connection()
 
-        # Only show the first image in "input"
-        for c in range(C):
-            viz.heatmap(input[0, 0],opts=dict(colormap='Electric',
-                        title='Epoch-{} Input'.format(epoch)))
-            viz.heatmap(X=target[0, c],opts=dict(colormap='Electric',
-                        title='Epoch-{} Points-{} Target'.format(epoch, c)))
-            viz.heatmap(X=fin1[0, c],opts=dict(colormap='Electric',
-                        title='Epoch-{} Points-{} Fin1'.format(epoch, c)))
-            viz.heatmap(X=fin2[0, c],opts=dict(colormap='Electric',
-                        title='Epoch-{} Points-{} Fin2'.format(epoch, c)))
-            viz.heatmap(X=fin3[0, c],opts=dict(colormap='Electric',
-                        title='Epoch-{} Points-{} Fin3'.format(epoch, c)))
+        channel = target.shape[1]
+        # Only show the first image, since the data is NxCxHxW
+        input_ = input[0, 0]
+        target_ = target[0]
+
+        for c in range(channel):
+            # Show the same input image several times for easily comparing the results
+            viz.heatmap(
+                X=input_,
+                opts=dict(
+                    colormap='Electric',
+                    title='Epoch-{} Input'.format(epoch)))
+
+            viz.heatmap(
+                X=target_[c],
+                opts=dict(
+                    colormap='Electric',
+                    title='Epoch-{} Points-{} Target'.format(epoch, c)))
+
+            for idx, fin in enumerate(out_finlist):
+                fin_ = fin[0]
+                viz.heatmap(
+                    X=fin_[c],
+                    opts=dict(
+                        colormap='Electric',
+                        title='Epoch-{} Points-{} Fin{}'.format(epoch, c, idx)))
         return
 
 
@@ -179,7 +195,7 @@ class ClassTrainer():
                     if (epoch % 5==0) and (step%5000==0):#(epoch % 10==0)
                         try:
                             # Show in visdom
-                            self.visualize_(epoch, C, inputs.cpu(), target.cpu(), fin1.cpu(), fin2.cpu(), fin3.cpu())
+                            self.visualize_(epoch, inputs.cpu(), target.cpu(), [fin1.cpu(), fin2.cpu(), fin3.cpu()])
                         except:
                             pass
 
