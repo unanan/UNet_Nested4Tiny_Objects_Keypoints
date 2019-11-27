@@ -47,7 +47,7 @@ def parse_args():
     parser.add_argument('--val-epoch',    default=1,    type=int, help='the num of epoch to eval')
 
     # Visualize Configs
-    parser.add_argument('--visualize', default=True, type=bool, help='use Visdom check training heatmap or not')
+    parser.add_argument('--visualize', default=False, type=bool, help='use Visdom check training heatmap or not')
 
 
     # Deprecated Configs

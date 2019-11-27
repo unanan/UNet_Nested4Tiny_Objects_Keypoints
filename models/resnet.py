@@ -3,7 +3,7 @@ import torch.nn as nn
 from torch.nn import init
 import math
 import torch.utils.model_zoo as model_zoo
-from utils.losses import *
+# from .losses import *
 from models.cos import Cos
 
 

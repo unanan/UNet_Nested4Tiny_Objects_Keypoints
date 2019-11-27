@@ -24,9 +24,10 @@ from torch import nn
 # from utils.trainer import Trainer
 from tools.misc.helper import create_heatmap, Save_Handle, AverageMeter
 import models
-import datasets
+# import datasets
 from tools.losses.focal_loss import FocalLoss_BCE_2d
 
+from trainer.trainer_base import TrainerBase
 
 from visdom import Visdom
 viz = Visdom(env='keypoints training')
@@ -39,37 +40,11 @@ TARGET_SIZE=128
 
 
 
-class Trainer():
+class Trainer(TrainerBase):
     '''
     - Training Class, including loading dataset,
         preprocessing, training, validating, etc.
     '''
-
-    #===================================================================================================================
-    #====================================================== Init =======================================================
-    #===================================================================================================================
-
-    def __init__(self, args):
-        '''
-        - Construct Trainer & print the settings
-        - Used: Used in train_classifier.py
-        :param args: arguments to parse
-        '''
-
-        super(Trainer, self).__init__()
-        self.args = args
-        self.needVisualize = args.visualize
-
-        sub_dir = self.args.model_name + '-' + datetime.strftime(datetime.now(), '%m%d-%H%M%S')  # prepare saving path
-        self.save_dir = os.path.join(self.args.save_dir, sub_dir)
-
-        if not os.path.exists(self.save_dir):
-            os.makedirs(self.save_dir)
-
-        setlogger(os.path.join(self.save_dir, 'train.log'))  # set logger
-
-        for k, v in self.args.__dict__.items():  # save args
-            logging.info("{}: {}".format(k, v))
 
     #===================================================================================================================
     #============================================= Intermediate Functions ==============================================
@@ -425,6 +400,8 @@ class Trainer():
         :return:
         '''
 
+        self.needVisualize = self.args.visualize
+
         # Set Gpu(s)
         if torch.cuda.is_available():
             self.device = torch.device("cuda")
@@ -589,9 +566,3 @@ class Trainer():
 
             # if epoch % self.args.val_epoch == 0:
             #     self.val_epoch_(epoch)
-
-
-
-# For Testing
-if __name__ == '__main__':
-    pass
