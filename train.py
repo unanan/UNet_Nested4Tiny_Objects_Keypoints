@@ -6,7 +6,7 @@
 #
 
 #-*- coding: utf-8 -*
-from trainer.trainer import ClassTrainer
+from trainer.trainer import Trainer
 import argparse
 import os
 
@@ -66,6 +66,6 @@ if __name__ == '__main__':
     os.environ['CUDA_VISIBLE_DEVICES'] = args.device.strip()
 
     # Start training
-    trainer = ClassTrainer(args)
+    trainer = Trainer(args)
     trainer.setup()
     trainer.train()
