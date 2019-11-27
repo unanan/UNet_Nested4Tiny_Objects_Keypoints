@@ -27,8 +27,6 @@ from tools.losses.focal_loss import FocalLoss_BCE_2d
 import models
 import datasets
 
-
-
 # Add the parent folder to sys.path
 # sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
@@ -99,19 +97,16 @@ class Trainer(TrainerBase):
         # step_acc = AverageMeter()
         step_start = time.time()
 
-        if self.lr_scheduler is not None:
-            self.lr_scheduler.step(epoch)
 
         epoch_start = time.time()
-        self.model.train()  # Set model to training mode
-        # self.train_sampler.set_epoch(epoch)
+
+        # Set model to training mode
+        self.model.train()
 
         epoch_loss = AverageMeter()
         # epoch_acc = AverageMeter()
 
         # Iterate over data.
-        #TODO:UNAGUO New added dim: scenes
-        # for inputs, labels in self.dataloaders['train']:
         for batch_idx, (inputs, labels) in enumerate(self.dataloaders['train']):
             # inputs = inputs.to(self.device)
             # labels = labels.to(self.device)
@@ -119,14 +114,16 @@ class Trainer(TrainerBase):
             # inputs = self.rbm.sample_hidden(inputs)
 
             # forward
-            # track history if only in train
             with torch.set_grad_enabled(True):
                 self.optimizer.zero_grad()
-                fin1,fin2,fin3 = self.model(inputs)  #,fin4
+                outputs = self.model(inputs)  #,fin4
                 # if labels is not None:
                 #     labels = (labels,)
                 # out = out.mm(self.crit_mask)
                 # labels = labels.mm(self.crit_mask)
+
+                if isinstance(outputs,list):
+                    logging.info("More than one branch produce several outputs.")
 
                 _,C,H,W = fin1.shape
                 # print(fin1.cpu().shape,create_heatmap(labels.cpu(),H,W).shape)

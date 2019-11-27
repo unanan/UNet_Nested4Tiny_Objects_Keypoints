@@ -22,7 +22,7 @@ def parse_args():
 
     # Basic Configs
     parser.add_argument('--model-name',   default='UNet_Nested', help='the name of the model')
-    parser.add_argument('--dataset-name', default='GearKnob',    help='the name of the dataset')
+    parser.add_argument('--dataset-name', default='Fruits',      help='the name of the dataset')
     parser.add_argument('--device',       default='1,2,3',       help='assign GPU(s) index')
     parser.add_argument('--resume',       default='',            help='the path of model to resume training')
     parser.add_argument('--batch-size',   default=660, type=int, help='input batch size.')

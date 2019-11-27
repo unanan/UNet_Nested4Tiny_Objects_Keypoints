@@ -4,7 +4,6 @@
     <list default="true" id="fa13d177-914d-4fef-bd28-a3ef289b6b65" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/train.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/trainer/trainer.py" beforeDir="false" afterPath="$PROJECT_DIR$/trainer/trainer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/trainer/trainer_base.py" beforeDir="false" afterPath="$PROJECT_DIR$/trainer/trainer_base.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -39,13 +38,13 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="md" value="46" />
-          <entry key="py" value="5204" />
+          <entry key="py" value="5350" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="Markdown" value="46" />
-          <entry key="Python" value="5204" />
+          <entry key="Python" value="5350" />
         </counts>
       </usages-collector>
     </session>
@@ -55,10 +54,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/train.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="646">
-              <caret line="47" column="97" selection-start-line="47" selection-start-column="97" selection-end-line="47" selection-end-column="97" />
+            <state relative-caret-position="-58">
+              <caret line="24" column="65" selection-start-line="24" selection-start-column="65" selection-end-line="24" selection-end-column="65" />
               <folding>
                 <element signature="e#108#146#0" expanded="true" />
+                <element signature="e#261#360#1" />
               </folding>
             </state>
           </provider>
@@ -67,13 +67,12 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/trainer/trainer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="542">
-              <caret line="574" column="42" selection-start-line="574" selection-start-column="33" selection-end-line="574" selection-end-column="42" />
+            <state relative-caret-position="327">
+              <caret line="130" column="16" lean-forward="true" selection-start-line="130" selection-start-column="16" selection-end-line="130" selection-end-column="16" />
               <folding>
                 <element signature="e#170#179#0" expanded="true" />
                 <element signature="e#650#760#1" />
                 <element signature="e#2455#3712#0" />
-                <element signature="e#3444#10031#0" />
                 <element signature="e#10075#12762#0" />
                 <element signature="e#12813#13238#0" />
                 <element signature="e#13312#14529#0" />
@@ -92,15 +91,6 @@
                 <element signature="e#20350#20525#0" />
                 <element signature="e#21958#22036#0" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/trainer/trainer_base.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="650">
-              <caret line="29" lean-forward="true" selection-start-line="29" selection-end-line="29" />
             </state>
           </provider>
         </entry>
@@ -275,8 +265,9 @@
       <find>TripletLoss</find>
       <find>crit_mask</find>
       <find>lr_scheduler</find>
-      <find>args</find>
       <find>max_epoch</find>
+      <find>args</find>
+      <find>self.lr_scheduler.step(epoch)</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -921,20 +912,22 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/trainer/trainer_base.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="650">
+        <state relative-caret-position="500">
           <caret line="29" lean-forward="true" selection-start-line="29" selection-end-line="29" />
+          <folding>
+            <element signature="e#111#120#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/trainer/trainer.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="542">
-          <caret line="574" column="42" selection-start-line="574" selection-start-column="33" selection-end-line="574" selection-end-column="42" />
+        <state relative-caret-position="327">
+          <caret line="130" column="16" lean-forward="true" selection-start-line="130" selection-start-column="16" selection-end-line="130" selection-end-column="16" />
           <folding>
             <element signature="e#170#179#0" expanded="true" />
             <element signature="e#650#760#1" />
             <element signature="e#2455#3712#0" />
-            <element signature="e#3444#10031#0" />
             <element signature="e#10075#12762#0" />
             <element signature="e#12813#13238#0" />
             <element signature="e#13312#14529#0" />
@@ -958,10 +951,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/train.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="646">
-          <caret line="47" column="97" selection-start-line="47" selection-start-column="97" selection-end-line="47" selection-end-column="97" />
+        <state relative-caret-position="-58">
+          <caret line="24" column="65" selection-start-line="24" selection-start-column="65" selection-end-line="24" selection-end-column="65" />
           <folding>
             <element signature="e#108#146#0" expanded="true" />
+            <element signature="e#261#360#1" />
           </folding>
         </state>
       </provider>
