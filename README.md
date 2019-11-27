@@ -15,6 +15,7 @@ Keypoints Detection of tiny objects with UNet_Nested(UNet++), based on PyTorch1.
 - Pytorch 1.0
 - Opencv >=3.x
 - Pillow (Up to date)
+- Visdom (Up to date)
 
 
 ### Installation

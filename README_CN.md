@@ -15,6 +15,7 @@
 - Pytorch 1.0
 - Opencv >=3.x
 - Pillow (最新)
+- Visdom (最新)
 
 
 ### 安装说明
