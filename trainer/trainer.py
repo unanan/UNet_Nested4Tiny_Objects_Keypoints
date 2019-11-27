@@ -11,33 +11,26 @@ import sys
 import time
 import logging
 from datetime import datetime
-
-
-from tools.misc.logger import setlogger
 import numpy as np
 import numpy.matlib
+from visdom import Visdom
+viz = Visdom(env='keypoints training')
 
 import torch
 from torch import optim
 from torch import nn
 
-# from utils.trainer import Trainer
-from tools.misc.helper import create_heatmap, Save_Handle, AverageMeter
-import models
-# import datasets
-from tools.losses.focal_loss import FocalLoss_BCE_2d
-
 from trainer.trainer_base import TrainerBase
+from tools.misc.helper import create_heatmap, Save_Handle, AverageMeter
+from tools.misc import sampler
+from tools.losses.focal_loss import FocalLoss_BCE_2d
+import models
+import datasets
 
-from visdom import Visdom
-viz = Visdom(env='keypoints training')
 
 
 # Add the parent folder to sys.path
 # sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-
-TARGET_SIZE=128
-
 
 
 class Trainer(TrainerBase):
@@ -92,12 +85,11 @@ class Trainer(TrainerBase):
         return
 
 
-    def train_epoch_(self, epoch, criterion):
+    def train_epoch_(self, epoch):
         '''
         - Training of the process
         - Used: Used in function "train"
         :param epoch:  Epoch index
-        :param criterion:  Training criterion
         :return:
         '''
 
@@ -146,10 +138,10 @@ class Trainer(TrainerBase):
                 # print(np.max(fin1.cpu().detach().numpy()[0,0]),np.min(fin1.cpu().detach().numpy()[0,0]))
                 # print(np.max(fin2.cpu().detach().numpy()[0,0]),np.min(fin2.cpu().detach().numpy()[0,0]))
                 # print(np.max(fin3.cpu().detach().numpy()[0,0]),np.min(fin3.cpu().detach().numpy()[0,0]))
-                loss1 = criterion(fin1.cpu(), target)
-                loss2 = criterion(fin2.cpu(), target)
-                loss3 = criterion(fin3.cpu(), target)
-                # loss4 = criterion(fin4.cpu(), target)
+                loss1 = self.criterion(fin1.cpu(), target)
+                loss2 = self.criterion(fin2.cpu(), target)
+                loss3 = self.criterion(fin3.cpu(), target)
+                # loss4 = self.criterion(fin4.cpu(), target)
 
                 T = 5
                 # loss = 0.25*(loss1+loss2+loss3+loss4)
@@ -317,7 +309,6 @@ class Trainer(TrainerBase):
         return out_dis_matrix
 
 
-    #region Full-Connection
     def val_epoch_fc(self, epoch):
         epoch_start = time.time()
         self.model.eval()  # Set model to evaluate mode
@@ -345,7 +336,6 @@ class Trainer(TrainerBase):
         #     self.best_dist = sum_dist
         #     logging.info("save best dist model epoch {}, sum distance: {}".format(epoch,sum_dist))
         #     torch.save(model_state_dic, os.path.join(self.save_dir, 'best_acc_model.pth'))
-    #endregion
 
 
     def cal_pos(self, mat):
@@ -412,42 +402,51 @@ class Trainer(TrainerBase):
             raise Exception("gpu is not available")
 
 
-        # Get dataset's Class
-        # Tutorial: https://pytorch.org/tutorials/beginner/data_loading_tutorial.html
-        dataset_name = getattr(datasets, self.args.dataset_name)
-        ### "db_dict"'s format: {'train':Dataset(), 'val':Dataset()}
-        self.db_dict = {x: dataset_name(os.path.join(self.args.data_dir,'{}.txt'.format(x)), x) for x in ['train', 'val']}
+        # Get dataset's Class   Tutorial: https://pytorch.org/tutorials/beginner/data_loading_tutorial.html
+        self.dataset_item = getattr(datasets, self.args.dataset_name)
+        self.dataset_dict = {
+            "train": self.dataset_item(
+                os.path.join(self.args.data_dir, self.args.dataset_name, 'train.txt'),
+                "train"),
+            "val": self.dataset_item(
+                os.path.join(self.args.data_dir, self.args.dataset_name, 'val.txt'),
+                "val")} #TODO: Provided a sample of dataset class
 
 
-        # region 3. Load Data with sampler
-        # self.train_sampler = torch.utils.data.distributed.DistributedSampler(self.datasets["train"],num_replicas = hvd.size(),rank=hvd.rank())
-        # self.val_sampler = torch.utils.data.distributed.DistributedSampler(self.datasets["val"],num_replicas = hvd.size(),rank=hvd.rank())
-        # self.dataloaders = {'train':torch.utils.data.DataLoader(
-        #                             self.datasets['train'],
-        #                             batch_size=args.batch_size,
-        #                             #shuffle=True,
-        #                             num_workers=24,#args.num_workers
-        #                             pin_memory=True,
-        #                             sampler=self.train_sampler),
-        #                     'val':torch.utils.data.DataLoader(
-        #                           self.datasets['val'],
-        #                           batch_size=args.batch_size,
-        #                           # shuffle=False,
-        #                           num_workers=24,#args.num_workers
-        #                           pin_memory=True,
-        #                           sampler=self.val_sampler)}
-        #endregion
+        # Load Data
+        if self.args.data_sampler:
+            # Load Data with sampler
+            self.train_sampler = getattr(sampler, self.args.data_sampler)
+            self.dataloaders = {
+                'train': torch.utils.data.DataLoader(
+                    self.datasets['train'],
+                    batch_size=self.args.batch_size,
+                    num_workers=self.args.num_workers,
+                    sampler=self.train_sampler,
+                    pin_memory=True),
+                'val': torch.utils.data.DataLoader(
+                    self.datasets['val'],
+                    batch_size=self.args.batch_size,
+                    num_workers=self.args.num_workers,
+                    pin_memory=True)}
+        else:
+            # Load Data without sampler
+            self.dataloader_dict = {
+                "train": torch.utils.data.DataLoader(
+                    self.dataset_dict["train"],
+                    batch_size=self.args.batch_size,
+                    num_workers=self.args.num_workers,
+                    shuffle=True,
+                    pin_memory=True),
+                "val": torch.utils.data.DataLoader(
+                    self.dataset_dict["val"],
+                    batch_size=self.args.batch_size,
+                    num_workers=self.args.num_workers,
+                    shuffle=False,
+                    pin_memory=True)}
 
 
-        #region 3. Load Data without sampler
-        self.dataloaders = {x: torch.utils.data.DataLoader(self.datasets[x], batch_size=self.args.batch_size,
-                                                           shuffle=(True if x == 'train' else False),
-                                                           num_workers=self.args.num_workers, pin_memory=True)
-                            for x in ['train', 'val']}
-        #endregion
-
-
-        # Set model as data-parallel mode
+        # Get model & Set model as data-parallel mode
         if self.device_count > 1:
             self.model = getattr(models, self.args.model_name)()
             self.model = torch.nn.DataParallel(self.model)
@@ -503,6 +502,7 @@ class Trainer(TrainerBase):
             self.lr_scheduler = optim.lr_scheduler.ExponentialLR(self.optimizer, self.args.gamma)
 
         elif self.args.lr_scheduler == 'fix':
+            logging.error("not implement the learning scheduler 'fix'")
             self.lr_scheduler = None
 
         else:
@@ -511,8 +511,8 @@ class Trainer(TrainerBase):
 
         # Resuming previous training by loading weights
         self.start_epoch = 0
+        self.max_epoch = self.args.max_epoch
         if self.args.resume:
-            # self.device = None  #TODO:
             suf = self.args.resume.rsplit('.', 1)[-1]
             if suf == 'tar':
                 checkpoint = torch.load(self.args.resume)
@@ -533,20 +533,22 @@ class Trainer(TrainerBase):
 
 
         # Set the model to device(CPU/GPU)
-        self.model.to(self.device)
-        # self.model.cuda()
+        self.model.to(self.device)  # self.model.cuda()
+
+        # Set the criterion
+        self.criterion = FocalLoss_BCE_2d()
 
 
-        # self.criterion = BCELogitsLossWithMask()#nn.MSELoss() #nn.CrossEntropyLoss()
-        self.criterion = FocalLoss_BCE_2d()#nn.BCELoss()#nn.BCEWithLogitsLoss()# Need to Check reduce=False, size_average=False
-
-        self.crit_mask = torch.FloatTensor([[2.0],[3.0],[3.0],[3.0],[2.0],[2.0],[3.0],[3.0],[3.0],[2.0]]).cuda()
+        # Set the parameters of saving strategy #TODO:Need to modify
         self.best_dist = 10.0
         self.best_dist_scale = 0.01  #Used in Full-Conv
         self.save_list = Save_Handle(max_num=self.args.max_model_num)
         self.avr_kpdist = np.array([0.0,0.0,0.0,0.0,0.0])
         self.count_kpdist = 0
         self.best_loss = 300.0
+
+        self.SETUPFINISH = True
+        return
 
 
     def train(self):
@@ -556,13 +558,21 @@ class Trainer(TrainerBase):
         :return:
         '''
 
-        # self.val_epoch_(0)
-        for epoch in range(self.start_epoch, self.args.max_epoch):
+        if not self.SETUPFINISH:
+            logging.error("call method 'setup' before calling 'train'")
+            return
+
+        for epoch in range(self.start_epoch, self.max_epoch):
             if self.lr_scheduler is not None:
                 self.lr_scheduler.step(epoch)
 
-            logging.info('-'*5 + 'Epoch {}/{}'.format(epoch, self.args.max_epoch - 1) + '-'*5)
-            self.train_epoch_(epoch,self.criterion)
+            logging.info('-'*5 + 'Epoch {}/{}'.format(epoch, self.max_epoch - 1) + '-'*5)
 
-            # if epoch % self.args.val_epoch == 0:
-            #     self.val_epoch_(epoch)
+            # Training
+            self.train_epoch_(epoch)
+
+            # Validating
+            if epoch % self.args.val_epoch == 0:
+                 self.val_epoch_(epoch)
+
+        return

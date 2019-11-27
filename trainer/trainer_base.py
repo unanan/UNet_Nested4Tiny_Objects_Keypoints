@@ -26,6 +26,8 @@ class TrainerBase(object):
             logging.info("{}: {}".format(k, v))
         self.args = args
 
+        self.SETUPFINISH = False
+
     def setup(self):
         """initial the datasets, model, loss and optimizer"""
         pass

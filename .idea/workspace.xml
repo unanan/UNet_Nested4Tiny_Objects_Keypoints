@@ -2,10 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="fa13d177-914d-4fef-bd28-a3ef289b6b65" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/tests/test_create_trainer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/UNet_Nested4Tiny_Objects_Keypoints.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/UNet_Nested4Tiny_Objects_Keypoints.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/resnet.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/resnet.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/train.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/trainer/trainer.py" beforeDir="false" afterPath="$PROJECT_DIR$/trainer/trainer.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/trainer/trainer_base.py" beforeDir="false" afterPath="$PROJECT_DIR$/trainer/trainer_base.py" afterDir="false" />
@@ -30,37 +26,37 @@
         <counts>
           <entry key="LICENSE" value="1" />
           <entry key="md" value="3" />
-          <entry key="py" value="42" />
+          <entry key="py" value="44" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key="Markdown" value="3" />
           <entry key="PLAIN_TEXT" value="1" />
-          <entry key="Python" value="42" />
+          <entry key="Python" value="44" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="md" value="46" />
-          <entry key="py" value="4269" />
+          <entry key="py" value="5204" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="Markdown" value="46" />
-          <entry key="Python" value="4269" />
+          <entry key="Python" value="5204" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/train.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="393">
-              <caret line="70" column="19" lean-forward="true" selection-start-line="70" selection-start-column="19" selection-end-line="70" selection-end-column="19" />
+            <state relative-caret-position="646">
+              <caret line="47" column="97" selection-start-line="47" selection-start-column="97" selection-end-line="47" selection-end-column="97" />
               <folding>
                 <element signature="e#108#146#0" expanded="true" />
               </folding>
@@ -71,74 +67,30 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/trainer/trainer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="339">
-              <caret line="32" column="38" lean-forward="true" selection-start-line="32" selection-start-column="38" selection-end-line="32" selection-end-column="38" />
+            <state relative-caret-position="542">
+              <caret line="574" column="42" selection-start-line="574" selection-start-column="33" selection-end-line="574" selection-end-column="42" />
               <folding>
-                <element signature="e#24#33#0" expanded="true" />
+                <element signature="e#170#179#0" expanded="true" />
                 <element signature="e#650#760#1" />
                 <element signature="e#2455#3712#0" />
                 <element signature="e#3444#10031#0" />
-                <element signature="e#3444#3632#1" />
                 <element signature="e#10075#12762#0" />
                 <element signature="e#12813#13238#0" />
                 <element signature="e#13312#14529#0" />
                 <element signature="e#14583#14951#0" />
                 <element signature="e#15000#15604#0" />
-                <element signature="e#15999#22568#0" />
-                <element signature="e#16941#17077#0" />
-                <element signature="e#22600#23146#0" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/models/resnet.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="470">
-              <caret line="163" lean-forward="true" selection-start-line="163" selection-end-line="163" />
-              <folding>
-                <element signature="e#0#12#0" expanded="true" />
-                <element signature="e#181#264#0" />
-                <element signature="e#280#672#0" />
-                <element signature="e#725#877#0" />
-                <element signature="e#913#1681#0" />
-                <element signature="e#1005#1331#0" />
-                <element signature="e#1367#1681#0" />
-                <element signature="e#1717#2804#0" />
-                <element signature="e#1809#2366#0" />
-                <element signature="e#2402#2804#0" />
-                <element signature="e#2837#5228#0" />
-                <element signature="e#2911#4124#0" />
-                <element signature="e#3840#4124#0" />
-                <element signature="e#3885#4001#0" />
-                <element signature="e#4066#4124#0" />
-                <element signature="e#4194#4800#0" />
-                <element signature="e#4293#4528#0" />
-                <element signature="e#4836#5228#0" />
-                <element signature="e#5263#8405#0" />
-                <element signature="e#5322#7043#0" />
-                <element signature="e#5391#5469#0" />
-                <element signature="e#6170#6217#0" />
-                <element signature="e#6478#6545#0" />
-                <element signature="e#6759#7043#0" />
-                <element signature="e#6804#6920#0" />
-                <element signature="e#6985#7043#0" />
-                <element signature="e#7113#7719#0" />
-                <element signature="e#7212#7447#0" />
-                <element signature="e#7755#8405#0" />
-                <element signature="e#8088#8122#0" />
-                <element signature="e#8299#8321#0" />
-                <element signature="e#8455#8761#0" />
-                <element signature="e#8455#8582#1" />
-                <element signature="e#8810#9116#0" />
-                <element signature="e#8810#8937#1" />
-                <element signature="e#9165#9471#0" />
-                <element signature="e#9165#9292#1" />
-                <element signature="e#9521#9830#0" />
-                <element signature="e#9521#9649#1" />
-                <element signature="e#9880#10189#0" />
-                <element signature="e#9880#10008#1" />
+                <element signature="e#15301#21764#0" />
+                <element signature="e#16173#16446#0" />
+                <element signature="e#16085#16317#0" />
+                <element signature="e#16529#17192#0" />
+                <element signature="e#17233#18042#0" />
+                <element signature="e#18126#18342#0" />
+                <element signature="e#18400#18567#0" />
+                <element signature="e#18626#18841#0" />
+                <element signature="e#18899#19111#0" />
+                <element signature="e#19173#19397#0" />
+                <element signature="e#20350#20525#0" />
+                <element signature="e#21958#22036#0" />
               </folding>
             </state>
           </provider>
@@ -147,20 +99,19 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/trainer/trainer_base.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="400">
-              <caret line="19" column="28" lean-forward="true" selection-start-line="19" selection-start-column="28" selection-end-line="19" selection-end-column="28" />
+            <state relative-caret-position="650">
+              <caret line="29" lean-forward="true" selection-start-line="29" selection-end-line="29" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/tests/test_create_trainer.py">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/tools/misc/sampler.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="450">
-              <caret line="18" column="21" lean-forward="true" selection-start-line="18" selection-start-column="21" selection-end-line="18" selection-end-column="21" />
+            <state relative-caret-position="75">
+              <caret line="3" column="20" selection-start-line="3" selection-start-column="20" selection-end-line="3" selection-end-column="20" />
               <folding>
-                <element signature="e#101#113#0" expanded="true" />
-                <marker date="1574843239722" expanded="true" signature="226:289" ph="..." />
+                <element signature="e#0#18#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -306,7 +257,6 @@
   <component name="FindInProjectRecents">
     <findStrings>
       <find>start_epoch</find>
-      <find>lr_scheduler</find>
       <find>setu</find>
       <find>start</find>
       <find>lovasz_hinge</find>
@@ -319,10 +269,14 @@
       <find>visualize</find>
       <find>produceTargetHeatmap</find>
       <find>visual</find>
-      <find>TripletLoss</find>
-      <find>IMAGE_HEIGHT</find>
       <find>visualize_</find>
+      <find>TARGET_SIZE</find>
+      <find>IMAGE_HEIGHT</find>
+      <find>TripletLoss</find>
+      <find>crit_mask</find>
+      <find>lr_scheduler</find>
       <find>args</find>
+      <find>max_epoch</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -350,11 +304,11 @@
         <option value="$PROJECT_DIR$/train/trainer.py" />
         <option value="$PROJECT_DIR$/train_classifier.py" />
         <option value="$PROJECT_DIR$/tools/losses/triplet_loss.py" />
-        <option value="$PROJECT_DIR$/trainer/trainer_base.py" />
         <option value="$PROJECT_DIR$/models/resnet.py" />
+        <option value="$PROJECT_DIR$/tests/test_create_trainer.py" />
+        <option value="$PROJECT_DIR$/trainer/trainer_base.py" />
         <option value="$PROJECT_DIR$/trainer/trainer.py" />
         <option value="$PROJECT_DIR$/train.py" />
-        <option value="$PROJECT_DIR$/tests/test_create_trainer.py" />
       </list>
     </option>
   </component>
@@ -488,7 +442,7 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32917964" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.122533746" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -788,17 +742,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tools/losses/bce_loss.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="325">
-          <caret line="35" selection-start-line="35" selection-end-line="35" />
-          <folding>
-            <element signature="e#234#1279#0" />
-            <element signature="e#1327#2974#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/train_classifier.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="350">
@@ -840,53 +783,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tools/losses/triplet_loss.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="12" selection-start-line="12" selection-end-line="12" />
-          <folding>
-            <element signature="e#152#164#0" expanded="true" />
-            <element signature="e#162#820#0" />
-            <element signature="e#162#314#1" />
-            <element signature="e#356#448#0" />
-            <element signature="e#857#1434#0" />
-            <element signature="e#857#967#1" />
-            <element signature="e#1009#1073#0" />
-            <element signature="e#1153#1434#0" />
-            <element signature="e#1481#2530#0" />
-            <element signature="e#1481#1716#1" />
-            <element signature="e#1773#1890#0" />
-            <element signature="e#1943#2530#0" />
-            <element signature="e#2068#2157#0" />
-            <element signature="e#2573#3557#0" />
-            <element signature="e#2573#2792#1" />
-            <element signature="e#2852#2971#0" />
-            <element signature="e#3059#3557#0" />
-            <element signature="e#12871#13985#0" />
-            <element signature="e#13075#13232#0" />
-            <element signature="e#13542#13565#0" />
-            <element signature="e#13691#13714#0" />
-            <element signature="e#13826#13827#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/tools/misc/helper.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="11" selection-start-line="11" selection-end-line="11" />
-          <folding>
-            <element signature="e#184#617#0" />
-            <element signature="e#314#617#0" />
-            <element signature="e#652#1115#0" />
-            <element signature="e#1149#1239#0" />
-            <element signature="e#1273#1434#0" />
-            <element signature="e#1533#2071#0" />
-            <element signature="e#2138#5829#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/models/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="25">
@@ -894,42 +790,21 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/trainer/trainer.py">
+    <entry file="file://$PROJECT_DIR$/tests/test_create_trainer.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="339">
-          <caret line="32" column="38" lean-forward="true" selection-start-line="32" selection-start-column="38" selection-end-line="32" selection-end-column="38" />
+        <state relative-caret-position="350">
+          <caret line="14" lean-forward="true" selection-start-line="14" selection-end-line="14" />
           <folding>
-            <element signature="e#24#33#0" expanded="true" />
-            <element signature="e#650#760#1" />
-            <element signature="e#2455#3712#0" />
-            <element signature="e#3444#10031#0" />
-            <element signature="e#3444#3632#1" />
-            <element signature="e#10075#12762#0" />
-            <element signature="e#12813#13238#0" />
-            <element signature="e#13312#14529#0" />
-            <element signature="e#14583#14951#0" />
-            <element signature="e#15000#15604#0" />
-            <element signature="e#15999#22568#0" />
-            <element signature="e#16941#17077#0" />
-            <element signature="e#22600#23146#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/train.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="393">
-          <caret line="70" column="19" lean-forward="true" selection-start-line="70" selection-start-column="19" selection-end-line="70" selection-end-column="19" />
-          <folding>
-            <element signature="e#108#146#0" expanded="true" />
+            <element signature="e#101#113#0" expanded="true" />
+            <marker date="1574843239722" expanded="true" signature="226:289" ph="..." />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/models/resnet.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="470">
-          <caret line="163" lean-forward="true" selection-start-line="163" selection-end-line="163" />
+        <state relative-caret-position="70">
+          <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
             <element signature="e#181#264#0" />
@@ -976,20 +851,117 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/trainer/trainer_base.py">
+    <entry file="file://$PROJECT_DIR$/tools/misc/helper.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="400">
-          <caret line="19" column="28" lean-forward="true" selection-start-line="19" selection-start-column="28" selection-end-line="19" selection-end-column="28" />
+        <state relative-caret-position="225">
+          <caret line="11" selection-start-line="11" selection-end-line="11" />
+          <folding>
+            <element signature="e#184#617#0" />
+            <element signature="e#314#617#0" />
+            <element signature="e#652#1115#0" />
+            <element signature="e#1149#1239#0" />
+            <element signature="e#1273#1434#0" />
+            <element signature="e#1533#2071#0" />
+            <element signature="e#2138#5829#0" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tests/test_create_trainer.py">
+    <entry file="file://$PROJECT_DIR$/tools/losses/triplet_loss.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
-          <caret line="18" column="21" lean-forward="true" selection-start-line="18" selection-start-column="21" selection-end-line="18" selection-end-column="21" />
+        <state relative-caret-position="300">
+          <caret line="12" selection-start-line="12" selection-end-line="12" />
           <folding>
-            <element signature="e#101#113#0" expanded="true" />
-            <marker date="1574843239722" expanded="true" signature="226:289" ph="..." />
+            <element signature="e#152#164#0" expanded="true" />
+            <element signature="e#162#820#0" />
+            <element signature="e#162#314#1" />
+            <element signature="e#356#448#0" />
+            <element signature="e#857#1434#0" />
+            <element signature="e#857#967#1" />
+            <element signature="e#1009#1073#0" />
+            <element signature="e#1153#1434#0" />
+            <element signature="e#1481#2530#0" />
+            <element signature="e#1481#1716#1" />
+            <element signature="e#1773#1890#0" />
+            <element signature="e#1943#2530#0" />
+            <element signature="e#2068#2157#0" />
+            <element signature="e#2573#3557#0" />
+            <element signature="e#2573#2792#1" />
+            <element signature="e#2852#2971#0" />
+            <element signature="e#3059#3557#0" />
+            <element signature="e#12871#13985#0" />
+            <element signature="e#13075#13232#0" />
+            <element signature="e#13542#13565#0" />
+            <element signature="e#13691#13714#0" />
+            <element signature="e#13826#13827#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tools/losses/bce_loss.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="325">
+          <caret line="35" selection-start-line="35" selection-end-line="35" />
+          <folding>
+            <element signature="e#234#1279#0" />
+            <element signature="e#1327#2974#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tools/misc/sampler.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="3" column="20" selection-start-line="3" selection-start-column="20" selection-end-line="3" selection-end-column="20" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/trainer/trainer_base.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="650">
+          <caret line="29" lean-forward="true" selection-start-line="29" selection-end-line="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/trainer/trainer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="542">
+          <caret line="574" column="42" selection-start-line="574" selection-start-column="33" selection-end-line="574" selection-end-column="42" />
+          <folding>
+            <element signature="e#170#179#0" expanded="true" />
+            <element signature="e#650#760#1" />
+            <element signature="e#2455#3712#0" />
+            <element signature="e#3444#10031#0" />
+            <element signature="e#10075#12762#0" />
+            <element signature="e#12813#13238#0" />
+            <element signature="e#13312#14529#0" />
+            <element signature="e#14583#14951#0" />
+            <element signature="e#15000#15604#0" />
+            <element signature="e#15301#21764#0" />
+            <element signature="e#16173#16446#0" />
+            <element signature="e#16085#16317#0" />
+            <element signature="e#16529#17192#0" />
+            <element signature="e#17233#18042#0" />
+            <element signature="e#18126#18342#0" />
+            <element signature="e#18400#18567#0" />
+            <element signature="e#18626#18841#0" />
+            <element signature="e#18899#19111#0" />
+            <element signature="e#19173#19397#0" />
+            <element signature="e#20350#20525#0" />
+            <element signature="e#21958#22036#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/train.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="646">
+          <caret line="47" column="97" selection-start-line="47" selection-start-column="97" selection-end-line="47" selection-end-column="97" />
+          <folding>
+            <element signature="e#108#146#0" expanded="true" />
           </folding>
         </state>
       </provider>

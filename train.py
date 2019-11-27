@@ -24,13 +24,14 @@ def parse_args():
     parser.add_argument('--model-name',   default='UNet_Nested', help='the name of the model')
     parser.add_argument('--dataset-name', default='GearKnob',    help='the name of the dataset')
     parser.add_argument('--device',       default='1,2,3',       help='assign GPU(s) index')
-    parser.add_argument('--resume',       default="",            help='the path of model to resume training')
+    parser.add_argument('--resume',       default='',            help='the path of model to resume training')
     parser.add_argument('--batch-size',   default=660, type=int, help='input batch size.')
     parser.add_argument('--num-workers',  default=24,  type=int, help='the num of training process')
 
     # Dataset Configs
-    parser.add_argument('--data-dir', default='/path/to/your/datasets', help='training set directory')
-    parser.add_argument('--save-dir', default='/path/to/your/weights',  help='directory to save model.')
+    parser.add_argument('--data-dir',     default='./datasets', help='datasets directory')
+    parser.add_argument('--save-dir',     default='./weights',  help='directory to save model.')
+    parser.add_argument('--data-sampler', default='',           help='data sampler when create DataLoader' )
 
     # Training Configs
     parser.add_argument('--optimizer',    default='adamw',              help='the optimizer method')
@@ -44,7 +45,7 @@ def parse_args():
     # Epoch Configs
     parser.add_argument('--display-step', default=1,    type=int, help='the num of steps to log training information')
     parser.add_argument('--max-epoch',    default=1000, type=int, help='max training epoch')
-    parser.add_argument('--val-epoch',    default=1,    type=int, help='the num of epoch to eval')
+    parser.add_argument('--val-epoch',    default=1,    type=int, help='the interval of epoch to eval')
 
     # Visualize Configs
     parser.add_argument('--visualize', default=False, type=bool, help='use Visdom check training heatmap or not')
