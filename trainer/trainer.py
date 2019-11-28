@@ -92,24 +92,25 @@ class Trainer(TrainerBase):
         '''
 
         # Parameters to print
-        step = 0
         step_loss = AverageMeter()
         # step_acc = AverageMeter()
+        epoch_loss = AverageMeter()
+        # epoch_acc = AverageMeter()
+
         step_start = time.time()
-
-
         epoch_start = time.time()
+
 
         # Set model to training mode
         self.model.train()
 
-        epoch_loss = AverageMeter()
-        # epoch_acc = AverageMeter()
 
         # Iterate over data
-        for batch_idx, (inputs, labels) in enumerate(self.dataloaders['train']):
+        for step_idx, (inputs, labels) in enumerate(self.dataloaders['train']):
             inputs, labels =  inputs.to(self.device), labels.to(self.device)
-            # inputs = self.rbm.sample_hidden(inputs) # Experimental step of encoding the image first
+
+            # Experimental step of encoding the image before training
+            # inputs = self.rbm.sample_hidden(inputs)
 
             # Forward
             with torch.set_grad_enabled(True):
@@ -117,7 +118,7 @@ class Trainer(TrainerBase):
                 outputs = self.model(inputs)
 
                 if isinstance(outputs,list):
-                    logging.info("More than one branches produce {} outputs".format(len(outputs)))
+                    # logging.info("More than one branches produce {} outputs".format(len(outputs)))
 
                     # Produce target heatmap
                     _,_,H,W = outputs[0].shape
@@ -137,7 +138,7 @@ class Trainer(TrainerBase):
                     self.optimizer.step()
 
                 else:
-                    logging.info("One output after forwarding")
+                    # logging.info("One output after forwarding")
 
                     # Produce target heatmap
                     _, _, H, W = outputs.shape
@@ -155,7 +156,7 @@ class Trainer(TrainerBase):
 
                 # Show in visdom
                 if self.needVisualize:
-                    if (epoch % 5==0) and (step%5000==0):
+                    if (epoch % self.vis_epoch==0) and (step_idx%5000==0):
                         try:
                             self.visualize_(epoch, inputs.cpu(), target.cpu(), outputs_cpu)
                         except:
@@ -165,41 +166,41 @@ class Trainer(TrainerBase):
                 # step_acc.update(np.mean((torch.max(out,1)[1]== labels.data.long()).detach().cpu().numpy().astype(np.float32))
                 #                 , inputs.size(0))
 
-                if step % self.log_step == 0:
+                # Log step training info on terminal
+                if step_idx % self.log_step == 0:
                     temp_time = time.time()
                     train_elap = temp_time - step_start
                     step_start = temp_time
-                    batch_elap = train_elap / self.log_step if step != 0 else train_elap
+                    batch_elap = train_elap / self.log_step if step_idx != 0 else train_elap
                     samples_per_s = 1.0 * step_loss.get_count() / train_elap
 
-                    finnum = batch_idx*len(inputs); sumnum = len(self.dataset_dict['train'])
-                    logging.info('Train Epoch: {}  [{}/{}({:.0f}%)]  '.format(epoch, finnum, sumnum, 100.*finnum/sumnum)+
-                                 'Train Loss: '+ ('{:.4f}, '*len(losses)).format(*losses)
-                                 +'avg-{:.4f}, '.format(step_loss.get_avg())+
-                                 '{:.1f} examples/sec {:.2f} sec/batch'
-                                 .format(epoch, finnum, sumnum, 100.*finnum/sumnum,
-                                         *losses, step_loss.get_avg(), #step_acc.get_avg(),Step Train Acc: {:.4f},  #(4)-{:.4f}, loss4,
-                                         samples_per_s, batch_elap))
+                    finish_num = step_idx*len(inputs); sum_num = len(self.dataset_dict['train'])
+                    logging.info(
+                        'Train Epoch: {}  [{}/{}({:.0f}%)]  '      .format(epoch, finish_num, sum_num, 100.*finish_num/sum_num)+
+                        'Train Loss: '+ ('{:.4f}, '*len(losses))   .format(*losses)+
+                        'avg-{:.4f}, '                             .format(step_loss.get_avg())+
+                        '{:.1f} examples/sec {:.2f} sec/batch'     .format(samples_per_s, batch_elap))
                     step_loss.reset()
                     # step_acc.reset()
 
-                step += 1
-
-                epoch_loss.update(loss.item(), inputs.size(0))
+                epoch_loss.update(avgloss.item(), inputs.size(0))
                 # epoch_acc.update(np.mean((preds == labels.data).detach().cpu().numpy().astype(np.float32))
                 #                 , inputs.size(0))
 
-        logging.info('Train: Epoch {}, Epoch Loss: {:.4f} , Cost {:.1f} sec'
-                     .format(epoch, epoch_loss.get_avg(), #epoch_acc.get_avg(),Acc: {:.4f}
-                             time.time() - epoch_start))
+        # Log epoch training info on terminal
+        logging.info(
+            'Train: Epoch {}, '     .format(epoch)+
+            'Epoch Loss: {:.4f} , ' .format(epoch_loss.get_avg())+
+            'Cost {:.1f} sec'       .format(time.time() - epoch_start))
 
 
-        model_state_dic = self.model.module.state_dict() if self.device_count > 1 else self.model.state_dict()
-
-        if epoch_loss.get_avg() < self.best_loss:
-            self.best_loss = epoch_loss.get_avg()
-            logging.info("Save best loss model epoch {}".format(epoch))
-            torch.save(model_state_dic, os.path.join(self.save_dir, 'best_loss-{}_model.pth'.format(self.best_loss)))
+        # model_state_dic = self.model.module.state_dict() if self.device_count > 1 else self.model.state_dict()
+        #
+        # if epoch_loss.get_avg() < self.best_loss:
+        #     self.best_loss = epoch_loss.get_avg()
+        #     logging.info("Save best loss model epoch {}".format(epoch))
+        #     torch.save(model_state_dic, os.path.join(self.save_dir, 'best_loss-{}_model.pth'.format(self.best_loss)))
+        #
 
 
     def val_epoch_(self, epoch):
