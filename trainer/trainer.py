@@ -97,29 +97,32 @@ class Trainer(TrainerBase):
         epoch_loss = AverageMeter()
         # epoch_acc = AverageMeter()
 
-        step_start = time.time()
+
         epoch_start = time.time()
 
 
         # Set model to training mode
         self.model.train()
 
+        # Sum of step(s)
+        step_sum = len(self.dataloaders['train'])
 
         # Iterate over data
         for step_idx, (inputs, labels) in enumerate(self.dataloaders['train']):
+            step_start = time.time()
+
             inputs, labels =  inputs.to(self.device), labels.to(self.device)
 
             # Experimental step of encoding the image before training
             # inputs = self.rbm.sample_hidden(inputs)
 
-            # Forward
             with torch.set_grad_enabled(True):
                 self.optimizer.zero_grad()
+
+                # Forward
                 outputs = self.model(inputs)
 
                 if isinstance(outputs,list):
-                    # logging.info("More than one branches produce {} outputs".format(len(outputs)))
-
                     # Produce target heatmap
                     _,_,H,W = outputs[0].shape
                     target = torch.from_numpy(create_heatmap(labels.cpu(),H,W))
@@ -155,8 +158,8 @@ class Trainer(TrainerBase):
                 step_loss.update(avgloss.item(), inputs.size(0))
 
                 # Show in visdom
-                if self.needVisualize:
-                    if (epoch % self.vis_epoch==0) and (step_idx%5000==0):
+                if self.need_visualize:
+                    if (epoch % self.vis_epoch==0) and (step_idx % step_sum == (step_sum-1)):
                         try:
                             self.visualize_(epoch, inputs.cpu(), target.cpu(), outputs_cpu)
                         except:
@@ -368,7 +371,7 @@ class Trainer(TrainerBase):
 
         self.log_step = self.args.log_step
 
-        self.needVisualize = self.args.visualize
+        self.need_visualize = self.args.visualize
         self.vis_epoch = self.args.vis_epoch
 
         # Set Gpu(s)
@@ -384,12 +387,8 @@ class Trainer(TrainerBase):
         # Get dataset's Class   Tutorial: https://pytorch.org/tutorials/beginner/data_loading_tutorial.html
         self.dataset_item = getattr(datasets, self.args.dataset_name)
         self.dataset_dict = {
-            "train": self.dataset_item(
-                os.path.join(self.args.data_dir, self.args.dataset_name, 'train.txt'),
-                "train"),
-            "val": self.dataset_item(
-                os.path.join(self.args.data_dir, self.args.dataset_name, 'val.txt'),
-                "val")} #TODO: Provided a sample of dataset class
+            "train": self.dataset_item(os.path.join(self.args.data_dir, self.args.dataset_name, 'train.txt')),
+            "val": self.dataset_item(os.path.join(self.args.data_dir, self.args.dataset_name, 'val.txt'))} #TODO: Provided a sample of dataset class
 
 
         # Load Data
@@ -398,31 +397,32 @@ class Trainer(TrainerBase):
             self.train_sampler = getattr(sampler, self.args.data_sampler)
             self.dataloaders = {
                 'train': torch.utils.data.DataLoader(
-                    self.datasets['train'],
-                    batch_size=self.args.batch_size,
-                    num_workers=self.args.num_workers,
-                    sampler=self.train_sampler,
-                    pin_memory=True),
+                    self.dataset_dict['train'],
+                    batch_size  = self.args.batch_size,
+                    num_workers = self.args.num_workers,
+                    sampler     = self.train_sampler,
+                    pin_memory  = True),
                 'val': torch.utils.data.DataLoader(
-                    self.datasets['val'],
-                    batch_size=self.args.batch_size,
-                    num_workers=self.args.num_workers,
-                    pin_memory=True)}
+                    self.dataset_dict['val'],
+                    batch_size  = self.args.batch_size,
+                    num_workers = self.args.num_workers,
+                    shuffle     = False,
+                    pin_memory  = True)}
         else:
             # Load Data without sampler
             self.dataloader_dict = {
                 "train": torch.utils.data.DataLoader(
                     self.dataset_dict["train"],
-                    batch_size=self.args.batch_size,
-                    num_workers=self.args.num_workers,
-                    shuffle=True,
-                    pin_memory=True),
+                    batch_size  = self.args.batch_size,
+                    num_workers = self.args.num_workers,
+                    shuffle     = True,
+                    pin_memory  = True),
                 "val": torch.utils.data.DataLoader(
                     self.dataset_dict["val"],
-                    batch_size=self.args.batch_size,
-                    num_workers=self.args.num_workers,
-                    shuffle=False,
-                    pin_memory=True)}
+                    batch_size  = self.args.batch_size,
+                    num_workers = self.args.num_workers,
+                    shuffle     = False,
+                    pin_memory  = True)}
 
 
         # Get model & Set model as data-parallel mode
