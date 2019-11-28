@@ -41,14 +41,14 @@ class Trainer(TrainerBase):
     #============================================= Intermediate Functions ==============================================
     #===================================================================================================================
 
-    def visualize_(self, epoch, input, target, out_finlist):
+    def visualize_(self, epoch, input, target, outputs_list):
         '''
         - Visualize the heatmap on Visdom
         - Used: Used in function "train_epoch_"
         :param epoch:  Epoch index, showed in the heatmaps' title
         :param input:  Input data batch
         :param target: Target heatmap batch
-        :param out_finlist: Output heatmap batch list after training
+        :param outputs_list: Output heatmap batch list after training
         :return:
         '''
 
@@ -73,13 +73,13 @@ class Trainer(TrainerBase):
                     colormap='Electric',
                     title='Epoch-{} Points-{} Target'.format(epoch, c)))
 
-            for idx, fin in enumerate(out_finlist):
-                fin_ = fin[0]
+            for idx, output in enumerate(outputs_list):
+                output_ = output[0]
                 viz.heatmap(
-                    X=fin_[c],
+                    X=output_[c],
                     opts=dict(
                         colormap='Electric',
-                        title='Epoch-{} Points-{} Fin{}'.format(epoch, c, idx)))
+                        title='Epoch-{} Points-{} Output-{}'.format(epoch, c, idx)))
         return
 
 
@@ -91,7 +91,7 @@ class Trainer(TrainerBase):
         :return:
         '''
 
-        # Parameters for print
+        # Parameters to print
         step = 0
         step_loss = AverageMeter()
         # step_acc = AverageMeter()
@@ -106,78 +106,79 @@ class Trainer(TrainerBase):
         epoch_loss = AverageMeter()
         # epoch_acc = AverageMeter()
 
-        # Iterate over data.
+        # Iterate over data
         for batch_idx, (inputs, labels) in enumerate(self.dataloaders['train']):
-            # inputs = inputs.to(self.device)
-            # labels = labels.to(self.device)
             inputs, labels =  inputs.to(self.device), labels.to(self.device)
-            # inputs = self.rbm.sample_hidden(inputs)
+            # inputs = self.rbm.sample_hidden(inputs) # Experimental step of encoding the image first
 
-            # forward
+            # Forward
             with torch.set_grad_enabled(True):
                 self.optimizer.zero_grad()
-                outputs = self.model(inputs)  #,fin4
-                # if labels is not None:
-                #     labels = (labels,)
-                # out = out.mm(self.crit_mask)
-                # labels = labels.mm(self.crit_mask)
+                outputs = self.model(inputs)
 
                 if isinstance(outputs,list):
-                    logging.info("More than one branch produce several outputs.")
+                    logging.info("More than one branches produce {} outputs".format(len(outputs)))
 
-                _,C,H,W = fin1.shape
-                # print(fin1.cpu().shape,create_heatmap(labels.cpu(),H,W).shape)
-                # print(labels.cpu())
-                target = torch.from_numpy(create_heatmap(labels.cpu(),H,W))
-                # print(target.shape)
-                # print(fin1.cpu().shape)
-                # print(np.max(create_heatmap(labels.cpu(),H,W)[0,0]), np.min(create_heatmap(labels.cpu(),H,W)[0,0]))
-                # print(np.max(fin1.cpu().detach().numpy()[0,0]),np.min(fin1.cpu().detach().numpy()[0,0]))
-                # print(np.max(fin2.cpu().detach().numpy()[0,0]),np.min(fin2.cpu().detach().numpy()[0,0]))
-                # print(np.max(fin3.cpu().detach().numpy()[0,0]),np.min(fin3.cpu().detach().numpy()[0,0]))
-                loss1 = self.criterion(fin1.cpu(), target)
-                loss2 = self.criterion(fin2.cpu(), target)
-                loss3 = self.criterion(fin3.cpu(), target)
-                # loss4 = self.criterion(fin4.cpu(), target)
+                    # Produce target heatmap
+                    _,_,H,W = outputs[0].shape
+                    target = torch.from_numpy(create_heatmap(labels.cpu(),H,W))
 
-                T = 5
-                # loss = 0.25*(loss1+loss2+loss3+loss4)
-                loss = 1.0*(loss1+loss2+loss3)/3
-                # loss = 1.0*(loss1*(4+T) + loss2*(3+T) + loss3*(2+T) + loss4*(1+T))/(4*T+10)
-                # if loss <1:
-                #     loss= 1.0*(loss1*(1+T) + loss2*(2+T) + loss3*(3+T) + loss4*(4+T))/(4*T+10)
-                #loss = 1.0*(2*loss2 +3*loss3+4*loss4)/9
-                #if loss<1:
-                #    loss = 1.0*(loss1+2*loss2 +3*loss3+4*loss4)/10
+                    avgloss=0; losses=[]; outputs_cpu = []
+                    for output in outputs:
+                        output_ = output.cpu()
+                        outputs_cpu.append(output_)
 
-                loss.backward()
-                self.optimizer.step()
+                        loss_ = self.criterion(output_, target)
+                        avgloss += loss_
+                        losses.append(loss_)
 
-                step_loss.update(loss.item(), inputs.size(0))
+                    avgloss = 1.0* avgloss/len(outputs)
+                    avgloss.backward()
+                    self.optimizer.step()
 
+                else:
+                    logging.info("One output after forwarding")
+
+                    # Produce target heatmap
+                    _, _, H, W = outputs.shape
+                    target = torch.from_numpy(create_heatmap(labels.cpu(), H, W))
+
+                    outputs_ = outputs.cpu()
+                    outputs_cpu=[outputs_]
+
+                    avgloss = self.criterion(outputs_, target)
+                    losses = [avgloss]
+                    avgloss.backward()
+                    self.optimizer.step()
+
+                step_loss.update(avgloss.item(), inputs.size(0))
+
+                # Show in visdom
                 if self.needVisualize:
-                    if (epoch % 5==0) and (step%5000==0):#(epoch % 10==0)
+                    if (epoch % 5==0) and (step%5000==0):
                         try:
-                            # Show in visdom
-                            self.visualize_(epoch, inputs.cpu(), target.cpu(), [fin1.cpu(), fin2.cpu(), fin3.cpu()])
+                            self.visualize_(epoch, inputs.cpu(), target.cpu(), outputs_cpu)
                         except:
-                            pass
+                            logging.warning("No visdom server running.")
 
                 # TODO: Need to check
                 # step_acc.update(np.mean((torch.max(out,1)[1]== labels.data.long()).detach().cpu().numpy().astype(np.float32))
                 #                 , inputs.size(0))
 
-                if step % self.args.display_step == 0:
+                if step % self.log_step == 0:
                     temp_time = time.time()
                     train_elap = temp_time - step_start
                     step_start = temp_time
-                    batch_elap = train_elap / self.args.display_step if step != 0 else train_elap
+                    batch_elap = train_elap / self.log_step if step != 0 else train_elap
                     samples_per_s = 1.0 * step_loss.get_count() / train_elap
-                    logging.info('Train Epoch: {}  [{}/{}({:.0f}%)]  '
-                                 'Train Loss: (1)-{:.4f}, (2)-{:.4f}, (3)-{:.4f}, avg-{:.4f}, '
+
+                    finnum = batch_idx*len(inputs); sumnum = len(self.dataset_dict['train'])
+                    logging.info('Train Epoch: {}  [{}/{}({:.0f}%)]  '.format(epoch, finnum, sumnum, 100.*finnum/sumnum)+
+                                 'Train Loss: '+ ('{:.4f}, '*len(losses)).format(*losses)
+                                 +'avg-{:.4f}, '.format(step_loss.get_avg())+
                                  '{:.1f} examples/sec {:.2f} sec/batch'
-                                 .format(epoch, batch_idx*len(inputs),len(self.datasets['train']), 100.*batch_idx/len(self.dataloaders['train']),
-                                         loss1,loss2,loss3,step_loss.get_avg(), #step_acc.get_avg(),Step Train Acc: {:.4f},  #(4)-{:.4f}, loss4,
+                                 .format(epoch, finnum, sumnum, 100.*finnum/sumnum,
+                                         *losses, step_loss.get_avg(), #step_acc.get_avg(),Step Train Acc: {:.4f},  #(4)-{:.4f}, loss4,
                                          samples_per_s, batch_elap))
                     step_loss.reset()
                     # step_acc.reset()
@@ -192,36 +193,13 @@ class Trainer(TrainerBase):
                      .format(epoch, epoch_loss.get_avg(), #epoch_acc.get_avg(),Acc: {:.4f}
                              time.time() - epoch_start))
 
-        # Update criterion weight mask
-        # if self.count_kpdist % 6 == 1:
-        #     print(self.avr_kpdist)
-        #     self.avr_kpdist /= 10
-        #     minval = np.min(self.avr_kpdist)
-        #     self.avr_kpdist /= minval
-        #     self.count_kpdist = 0
-        #     avr_kpdist_ = self.avr_kpdist.tolist()
-        #     avr_kpdist_ *= 2
-        #     weightarray = np.array(avr_kpdist_,dtype=float)
-        #     shape0 = weightarray.shape[0]
-        #     weightarray = weightarray.reshape((shape0 ,1))
-        #     self.crit_mask=torch.FloatTensor(weightarray).cuda()
-        #     self.avr_kpdist = np.array([0.0,0.0,0.0,0.0,0.0])
-            # logging.info("New crit weights: {}".format(weightarray))
 
         model_state_dic = self.model.module.state_dict() if self.device_count > 1 else self.model.state_dict()
 
         if epoch_loss.get_avg() < self.best_loss:
             self.best_loss = epoch_loss.get_avg()
-            logging.info("save best loss model epoch {}".format(epoch))
+            logging.info("Save best loss model epoch {}".format(epoch))
             torch.save(model_state_dic, os.path.join(self.save_dir, 'best_loss-{}_model.pth'.format(self.best_loss)))
-
-        # save_path = os.path.join(self.save_dir, '{}_ckpt.tar'.format(epoch))
-        # torch.save({
-        #     'epoch': epoch,
-        #     'optimizer_state_dict': self.optimizer.state_dict(),
-        #     'model_state_dict': model_state_dic
-        # }, save_path)
-        # self.save_list.append(save_path)
 
 
     def val_epoch_(self, epoch):
@@ -276,7 +254,7 @@ class Trainer(TrainerBase):
 
         if avg3 < self.best_dist:
             self.best_dist = avg3
-            logging.info("save best dist model epoch {}, avg4 distance: {}".format(epoch, avg3))
+            logging.info("Save best dist model epoch {}, avg4 distance: {}".format(epoch, avg3))
             torch.save(model_state_dic, os.path.join(self.save_dir, 'best_epoch{}_avg4.pth'.format(epoch)))
 
         # if avg2 < self.best_dist:
@@ -387,16 +365,19 @@ class Trainer(TrainerBase):
         :return:
         '''
 
+        self.log_step = self.args.log_step
+
         self.needVisualize = self.args.visualize
+        self.vis_epoch = self.args.vis_epoch
 
         # Set Gpu(s)
         if torch.cuda.is_available():
             self.device = torch.device("cuda")
             self.device_count = torch.cuda.device_count()
-            logging.info('using {} gpus'.format(self.device_count))
+            logging.info('Using {} gpus'.format(self.device_count))
             assert self.args.batch_size % self.device_count == 0, "batch size should be divided by device count"
         else:
-            raise Exception("gpu is not available")
+            raise Exception("GPU is not available")
 
 
         # Get dataset's Class   Tutorial: https://pytorch.org/tutorials/beginner/data_loading_tutorial.html
@@ -487,7 +468,7 @@ class Trainer(TrainerBase):
                 weight_decay= self.args.weight_decay)
 
         else:
-            raise Exception("optimizer not implement")
+            raise Exception("Optimizer not implement")
 
 
         # Set the learning scheduler
@@ -499,11 +480,11 @@ class Trainer(TrainerBase):
             self.lr_scheduler = optim.lr_scheduler.ExponentialLR(self.optimizer, self.args.gamma)
 
         elif self.args.lr_scheduler == 'fix':
-            logging.error("not implement the learning scheduler 'fix'")
+            logging.error("Not implement the learning scheduler 'fix'")
             self.lr_scheduler = None
 
         else:
-            raise Exception("lr schedule not implement")
+            raise Exception("LR schedule not implement")
 
 
         # Resuming previous training by loading weights
@@ -556,7 +537,7 @@ class Trainer(TrainerBase):
         '''
 
         if not self.SETUPFINISH:
-            logging.error("call method 'setup' before calling 'train'")
+            logging.error("Call method 'setup' before calling 'train'")
             return
 
         for epoch in range(self.start_epoch, self.max_epoch):

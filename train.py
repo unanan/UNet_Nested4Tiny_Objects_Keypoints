@@ -43,12 +43,13 @@ def parse_args():
     parser.add_argument('--steps',        default='50, 100, 200, 300',  help='the learning rate decay steps')
 
     # Epoch Configs
-    parser.add_argument('--display-step', default=1,    type=int, help='the num of steps to log training information')
-    parser.add_argument('--max-epoch',    default=1000, type=int, help='max training epoch')
-    parser.add_argument('--val-epoch',    default=1,    type=int, help='the interval of epoch to eval')
+    parser.add_argument('--log-step',  default=1,    type=int, help='the interval of steps to log training information')
+    parser.add_argument('--max-epoch', default=1000, type=int, help='max training epoch')
+    parser.add_argument('--val-epoch', default=1,    type=int, help='the interval of epoch to eval')
 
     # Visualize Configs
     parser.add_argument('--visualize', default=False, type=bool, help='use Visdom check training heatmap or not')
+    parser.add_argument('--vis-epoch', default=10,    type=int,  help='the interval of epoches to visualize')
 
 
     # Deprecated Configs
