@@ -28,7 +28,7 @@
 
 ### 运行说明
 
-- Please refer to 
+- 请参见  [运行说明](https://github.com/unademo/UNet_Nested4Tiny_Objects_Keypoints/blob/master/docs/quickstart_cn.md)
 
 
 ### 结果一览
