@@ -3,9 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="fa13d177-914d-4fef-bd28-a3ef289b6b65" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/datasets/datasets_base.py" beforeDir="false" afterPath="$PROJECT_DIR$/datasets/datasets_base.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tools/misc/helper.py" beforeDir="false" afterPath="$PROJECT_DIR$/tools/misc/helper.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/train.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/trainer/trainer.py" beforeDir="false" afterPath="$PROJECT_DIR$/trainer/trainer.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -41,32 +38,29 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="md" value="46" />
-          <entry key="py" value="12204" />
+          <entry key="py" value="12273" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="Markdown" value="46" />
-          <entry key="Python" value="12204" />
+          <entry key="Python" value="12273" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/trainer/trainer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="366">
-              <caret line="214" column="91" selection-start-line="214" selection-start-column="91" selection-end-line="214" selection-end-column="91" />
+            <state relative-caret-position="251">
+              <caret line="120" column="28" selection-start-line="120" selection-start-column="28" selection-end-line="120" selection-end-column="28" />
               <folding>
                 <element signature="e#170#179#0" expanded="true" />
                 <element signature="e#644#679#0" />
                 <element signature="e#1325#2689#0" />
-                <element signature="e#2735#6648#0" />
                 <element signature="e#2735#2877#1" />
-                <element signature="e#3735#4377#0" />
-                <element signature="e#4489#4915#0" />
                 <element signature="e#5430#6306#0" />
                 <element signature="e#10185#10610#0" />
                 <element signature="e#10656#11873#0" />
@@ -74,7 +68,6 @@
                 <element signature="e#11287#11291#0" />
                 <element signature="e#11282#11650#0" />
                 <element signature="e#12329#12933#0" />
-                <element signature="e#13328#19880#0" />
                 <element signature="e#13328#13429#1" />
                 <element signature="e#14602#15265#0" />
                 <element signature="e#15292#15917#0" />
@@ -95,8 +88,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/datasets/datasets_base.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="408">
-              <caret line="55" column="15" selection-start-line="55" selection-start-column="8" selection-end-line="55" selection-end-column="15" />
+            <state relative-caret-position="358">
+              <caret line="53" lean-forward="true" selection-start-line="53" selection-end-line="53" />
               <folding>
                 <element signature="e#112#133#0" expanded="true" />
                 <element signature="e#408#591#0" />
@@ -110,7 +103,7 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/tools/misc/heatmap.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="155">
@@ -129,8 +122,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/tools/losses/focal_loss.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="32">
-              <caret line="254" column="6" selection-start-line="254" selection-start-column="6" selection-end-line="254" selection-end-column="6" />
+            <state relative-caret-position="260">
+              <caret line="255" column="8" selection-start-line="255" selection-start-column="8" selection-end-line="255" selection-end-column="8" />
               <folding>
                 <element signature="e#169#187#0" expanded="true" />
                 <element signature="e#7142#9379#0" />
@@ -238,8 +231,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>setu</find>
-      <find>start</find>
       <find>lovasz_hinge</find>
       <find>ifilterfalse</find>
       <find>error_loss</find>
@@ -267,6 +258,8 @@
       <find>TripletLoss</find>
       <find>radius</find>
       <find>model</find>
+      <find>heatmap_pattern</find>
+      <find>cri</find>
       <find>getinfo</find>
     </findStrings>
   </component>
@@ -303,12 +296,12 @@
         <option value="$PROJECT_DIR$/train.py" />
         <option value="$PROJECT_DIR$/tools/misc/heatmap_pattern.py" />
         <option value="$PROJECT_DIR$/datasets/datasets_base.py" />
-        <option value="$PROJECT_DIR$/trainer/trainer.py" />
         <option value="$PROJECT_DIR$/tools/misc/heatmap.py" />
+        <option value="$PROJECT_DIR$/trainer/trainer.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="55" />
     <option name="y" value="-8" />
     <option name="width" value="1873" />
@@ -466,7 +459,7 @@
     </history-entry>
   </component>
   <component name="ToolWindowManager">
-    <frame x="55" y="-8" width="1873" height="1096" extended-state="6" />
+    <frame x="55" y="-8" width="1873" height="1096" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.13079019" />
@@ -947,29 +940,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tools/losses/focal_loss.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="32">
-          <caret line="254" column="6" selection-start-line="254" selection-start-column="6" selection-end-line="254" selection-end-column="6" />
-          <folding>
-            <element signature="e#169#187#0" expanded="true" />
-            <element signature="e#7142#9379#0" />
-            <element signature="e#7142#8005#1" />
-            <element signature="e#8089#8470#0" />
-            <element signature="e#8238#8367#0" />
-            <element signature="e#8520#9379#0" />
-            <element signature="e#9036#9081#0" />
-            <element signature="e#9182#9213#0" />
-            <element signature="e#9826#9845#0" />
-            <element signature="e#10467#10758#0" />
-            <element signature="e#10617#10671#0" />
-            <element signature="e#11024#11063#0" />
-            <element signature="e#11584#11842#0" />
-            <element signature="e#11584#11655#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/trainer/trainer_base.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="550">
@@ -996,46 +966,47 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/trainer/trainer.py">
+    <entry file="file://$PROJECT_DIR$/tools/misc/heatmap.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="366">
-          <caret line="214" column="91" selection-start-line="214" selection-start-column="91" selection-end-line="214" selection-end-column="91" />
+        <state relative-caret-position="155">
+          <caret line="14" column="33" selection-start-line="14" selection-start-column="33" selection-end-line="14" selection-end-column="33" />
           <folding>
-            <element signature="e#170#179#0" expanded="true" />
-            <element signature="e#644#679#0" />
-            <element signature="e#1325#2689#0" />
-            <element signature="e#2735#6648#0" />
-            <element signature="e#2735#2877#1" />
-            <element signature="e#3735#4377#0" />
-            <element signature="e#4489#4915#0" />
-            <element signature="e#5430#6306#0" />
-            <element signature="e#10185#10610#0" />
-            <element signature="e#10656#11873#0" />
-            <element signature="e#11230#11234#0" />
-            <element signature="e#11287#11291#0" />
-            <element signature="e#11282#11650#0" />
-            <element signature="e#12329#12933#0" />
-            <element signature="e#13328#19880#0" />
-            <element signature="e#13328#13429#1" />
-            <element signature="e#14602#15265#0" />
-            <element signature="e#15292#15917#0" />
-            <element signature="e#16294#16510#0" />
-            <element signature="e#16568#16735#0" />
-            <element signature="e#16794#17009#0" />
-            <element signature="e#17067#17279#0" />
-            <element signature="e#17341#17565#0" />
-            <element signature="e#18454#19312#0" />
-            <element signature="e#19912#20591#0" />
-            <element signature="e#20075#20153#0" />
-            <element signature="e#20229#20575#0" />
+            <element signature="e#143#157#0" expanded="true" />
+            <element signature="e#322#1767#0" />
+            <element signature="e#1052#1056#0" />
+            <element signature="e#1959#2995#0" />
+            <marker date="1575255404440" expanded="true" signature="231:232" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tools/losses/focal_loss.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="260">
+          <caret line="255" column="8" selection-start-line="255" selection-start-column="8" selection-end-line="255" selection-end-column="8" />
+          <folding>
+            <element signature="e#169#187#0" expanded="true" />
+            <element signature="e#7142#9379#0" />
+            <element signature="e#7142#8005#1" />
+            <element signature="e#8089#8470#0" />
+            <element signature="e#8238#8367#0" />
+            <element signature="e#8520#9379#0" />
+            <element signature="e#9036#9081#0" />
+            <element signature="e#9182#9213#0" />
+            <element signature="e#9826#9845#0" />
+            <element signature="e#10467#10758#0" />
+            <element signature="e#10617#10671#0" />
+            <element signature="e#11024#11063#0" />
+            <element signature="e#11584#11842#0" />
+            <element signature="e#11584#11655#0" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/datasets/datasets_base.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="408">
-          <caret line="55" column="15" selection-start-line="55" selection-start-column="8" selection-end-line="55" selection-end-column="15" />
+        <state relative-caret-position="358">
+          <caret line="53" lean-forward="true" selection-start-line="53" selection-end-line="53" />
           <folding>
             <element signature="e#112#133#0" expanded="true" />
             <element signature="e#408#591#0" />
@@ -1048,16 +1019,34 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tools/misc/heatmap.py">
+    <entry file="file://$PROJECT_DIR$/trainer/trainer.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="155">
-          <caret line="14" column="33" selection-start-line="14" selection-start-column="33" selection-end-line="14" selection-end-column="33" />
+        <state relative-caret-position="251">
+          <caret line="120" column="28" selection-start-line="120" selection-start-column="28" selection-end-line="120" selection-end-column="28" />
           <folding>
-            <element signature="e#143#157#0" expanded="true" />
-            <element signature="e#322#1767#0" />
-            <element signature="e#1052#1056#0" />
-            <element signature="e#1959#2995#0" />
-            <marker date="1575255404440" expanded="true" signature="231:232" ph="..." />
+            <element signature="e#170#179#0" expanded="true" />
+            <element signature="e#644#679#0" />
+            <element signature="e#1325#2689#0" />
+            <element signature="e#2735#2877#1" />
+            <element signature="e#5430#6306#0" />
+            <element signature="e#10185#10610#0" />
+            <element signature="e#10656#11873#0" />
+            <element signature="e#11230#11234#0" />
+            <element signature="e#11287#11291#0" />
+            <element signature="e#11282#11650#0" />
+            <element signature="e#12329#12933#0" />
+            <element signature="e#13328#13429#1" />
+            <element signature="e#14602#15265#0" />
+            <element signature="e#15292#15917#0" />
+            <element signature="e#16294#16510#0" />
+            <element signature="e#16568#16735#0" />
+            <element signature="e#16794#17009#0" />
+            <element signature="e#17067#17279#0" />
+            <element signature="e#17341#17565#0" />
+            <element signature="e#18454#19312#0" />
+            <element signature="e#19912#20591#0" />
+            <element signature="e#20075#20153#0" />
+            <element signature="e#20229#20575#0" />
           </folding>
         </state>
       </provider>
