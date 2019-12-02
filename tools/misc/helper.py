@@ -83,7 +83,7 @@ def cal_result(query_feas, query_labels, gal_feas, gal_labels, level):
     return acc, avg_pure
 
 
-
+#TODO:Need to put on GPU device
 def create_heatmap(target, image_height, image_width):
     # target: N C 2  (C=5)
     N, C, _ = target.shape
