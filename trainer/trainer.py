@@ -117,7 +117,7 @@ class Trainer(TrainerBase):
                 # Forward
                 outputs = self.model(inputs)
 
-                if isinstance(outputs,list):
+                if isinstance(outputs, tuple):
                     # Produce target heatmap
                     _,_,H,W = outputs[0].shape
                     target = torch.from_numpy(create_heatmap(labels.cpu(),H,W))
@@ -127,7 +127,7 @@ class Trainer(TrainerBase):
                         output_ = output.cpu()
                         outputs_cpu.append(output_)
 
-                        loss_ = self.criterion(output_, target)
+                        loss_ = self.heatmap_criterion(output_, target)
                         avgloss += loss_
                         losses.append(loss_)
 
@@ -138,12 +138,12 @@ class Trainer(TrainerBase):
                 else:
                     # Produce target heatmap
                     _, _, H, W = outputs.shape
-                    target = torch.from_numpy(create_heatmap(labels.cpu(), H, W))
+                    target = torch.from_numpy(self.heatmaper.create_heatmap(labels.cpu()))
 
                     outputs_ = outputs.cpu()
                     outputs_cpu=[outputs_]
 
-                    avgloss = self.criterion(outputs_, target)
+                    avgloss = self.heatmap_criterion(outputs_, target)
                     losses = [avgloss]
                     avgloss.backward()
                     self.optimizer.step()
@@ -192,117 +192,60 @@ class Trainer(TrainerBase):
         :return:
         '''
 
-        val_start = time.time()
+        epoch_heatmap_loss = AverageMeter()
+        epoch_landmark_loss = AverageMeter()
+        epoch_start = time.time()
 
         # Set model to validating mode
         self.model.eval()
 
-        dist_mat1 = np.array([])
-        dist_mat2 = np.array([])
-        dist_mat3 = np.array([])
-        dist_mat4 = np.array([])
+
         for inputs, labels in self.dataloaders['val']:
+            step_start = time.time()
             inputs = inputs.to(self.device)
+            labels = labels.to(self.device)
 
             # Forward
             with torch.set_grad_enabled(False):
                 outputs = self.model(inputs)
 
-            if isinstance(outputs,list):
-                _,_,H,W = outputs[0].shape
+            if isinstance(outputs,tuple):
+                target = torch.from_numpy(self.heatmaper.create_heatmap(labels.cpu()))
+                heatmap_loss = [];landmark_loss = []
+                for output in outputs:
+                    # Validate with heatmap loss
+                    heatmap_loss.append(self.heatmap_criterion(output.cpu(),target))
 
-                # Check with heatmap loss
-                target = torch.from_numpy(self.heatmap_pattern.create_heatmap(labels.cpu())) #create_heatmap(labels.cpu(),H,W)
-                heatmap_loss = 0
+                    # Validate with landmark(coordinates) loss
+                    preds = self.heatmaper.transfer_points(output.cpu(),labels.cpu())
+                    landmark_loss.append(self.landmark_criterion(preds, labels))
+                epoch_heatmap_loss.update(heatmap_loss[-1].item(), inputs.size(0))
+                epoch_landmark_loss.update(landmark_loss[-1].item(), inputs.size(0))
 
-                # Check with landmark(coordinates) loss
-                landmark_loss = 0
+                # Log step validating info on terminal
+                logging.info(
+                    'Validate:\t'+
+                    'Heatmap Loss: ' +  ("{:.4f} , "*len(heatmap_loss)) .format(*heatmap_loss) +
+                    'Landmark Loss: ' + ("{:.4f} , "*len(landmark_loss)).format(*landmark_loss) +
+                    'Cost {:.1f} sec'                                   .format(time.time() - step_start))
 
+        # Log epoch validating info on terminal
+        logging.info(
+            'Validate: Epoch {}, '          .format(epoch) +
+            'Heatmap Loss: ' +  "{:.4f} , " .format(epoch_heatmap_loss.get_avg()) +
+            'Landmark Loss: ' + "{:.4f} , " .format(epoch_landmark_loss.get_avg()) +
+            'Cost {:.1f} sec'               .format(time.time() - epoch_start))
 
-
-                #N,C,H,W
-                xy1 = self.cal_pos(fin1.cpu())
-                xy2 = self.cal_pos(fin2.cpu())
-                xy3 = self.cal_pos(fin3.cpu())
-                # xy4 = self.cal_pos(fin4.cpu())
-                # print(xy3)
-                # print(labels.cpu())
-
-                xy1_disval = self.cal_dist(xy1,labels.cpu())
-                xy2_disval = self.cal_dist(xy2,labels.cpu())
-                xy3_disval = self.cal_dist(xy3,labels.cpu())
-                # xy4_disval = self.cal_dist(xy4,labels.cpu())
-
-                dist_mat1 = np.hstack((dist_mat1, xy1_disval))
-                dist_mat2 = np.hstack((dist_mat2, xy2_disval))
-                dist_mat3 = np.hstack((dist_mat3, xy3_disval))
-                # dist_mat4 = np.hstack((dist_mat4, xy4_disval))
-
-        avg1 = np.sum(dist_mat1) / (dist_mat1.shape[0]+1)
-        avg2 = np.sum(dist_mat2) / (dist_mat2.shape[0]+1)
-        avg3 = np.sum(dist_mat3) / (dist_mat3.shape[0]+1)
-        # avg4 = np.sum(dist_mat3) / (dist_mat3.shape[0]+1)
-
-        # Log validating info on terminal
-        logging.info("Avg: (1)-{} (2)-{} (3)-{}".format(avg1,avg2,avg3)) # (4)-{} ,avg4
-
-
+        # Get model state dict
         model_state_dic = self.model.module.state_dict() if self.device_count > 1 else self.model.state_dict()
-        # Model Saving Strategy
+
+        # Weights Saving Strategy
         if self.model_save == "last":
-            logging.info("Save best model.".format(epoch, avg3))
-            torch.save(model_state_dic, os.path.join(self.save_dir, 'best_epoch_{}_heatmaploss_{}_landmarkloss_{}.pth'.format(epoch,heatmap_loss,landmark_loss)))
+            logging.info("Save best model.")
+            torch.save(model_state_dic, os.path.join(self.save_dir, 'best_epoch_{}_heatmaploss_{}_landmarkloss_{}.pth'.format(epoch,epoch_heatmap_loss.get_avg(),epoch_landmark_loss.get_avg())))
         else:  # "average"
             pass
-        if avg3 < self.best_dist:
-            self.best_dist = avg3
-            logging.info("Save best dist model epoch {}, avg4 distance: {}".format(epoch, avg3))
-            torch.save(model_state_dic, os.path.join(self.save_dir, 'best_epoch{}_avg4.pth'.format(epoch)))
-
-
-    def cal_dist_fc(self,outs, labels):
-        dis_matrix_ = outs-labels
-        dis_matrix_ *=dis_matrix_
-        out_dis_matrix = []
-        for ele in dis_matrix_:
-            dis_ele = []
-            for idx in range(5):
-                dis_ele.append(np.sqrt(ele[idx]+ele[idx+5]))
-            out_dis_matrix.append(dis_ele)
-            # logging.info("Dist: {}".format(dis_ele))
-
-        out_dis_matrix = np.mean(out_dis_matrix, axis=0)
-
-        return out_dis_matrix
-
-
-    def val_epoch_fc(self, epoch):
-        epoch_start = time.time()
-        self.model.eval()  # Set model to evaluate mode
-        dist = [96,96,96,96,96]
-
-        # Iterate over data.
-        for inputs, labels in self.dataloaders['val']:
-            inputs = inputs.to(self.device)
-            with torch.set_grad_enabled(False):
-                outs = self.model(inputs)
-                # TODO: Need to check the dimension
-                # dist = np.linalg.norm(outs.cpu() - labels.cpu())
-                # print(outs.cpu(),labels.cpu())
-                dist = self.cal_dist_fc(outs.cpu(),labels.cpu())
-                logging.info("Val: Epoch {}, Dist matrix: {}, Cost {:.1f} sec".format(epoch, dist,time.time()-epoch_start))
-                # TODO: Need to add image show
-
-
-        self.avr_kpdist += dist
-        self.count_kpdist +=1
-        sum_dist = sum(dist)
-
-        # model_state_dic = self.model.module.state_dict() if self.device_count > 1 else self.model.state_dict()
-        # if sum_dist < self.best_dist:
-        #     self.best_dist = sum_dist
-        #     logging.info("save best dist model epoch {}, sum distance: {}".format(epoch,sum_dist))
-        #     torch.save(model_state_dic, os.path.join(self.save_dir, 'best_acc_model.pth'))
+            raise NotImplementedError("Weights saving strategy 'average' is not implemented")
 
 
     def cal_heatmap_loss(self,):
@@ -311,48 +254,6 @@ class Trainer(TrainerBase):
 
     def cal_landmark_loss(self,):
         pass
-
-
-    def cal_pos(self, mat):
-        # mat: N, C, H, W
-        if not (len(mat.shape)==4):
-            raise ValueError("Mat should be as N x C x H x W")
-
-        N,C,H,W = mat.shape
-        reshaped_mat = mat.reshape(N,C,H*W)
-        pos = np.argmax(reshaped_mat, axis=2)  #
-
-        x= pos%W
-        y = (pos-x)/W
-
-        z = np.stack((x, y), axis=2)
-
-        # print(y.shape)
-
-        return z  #NxCx2
-
-
-    def cal_dist(self,xy_mat,labels):
-        # NC2: NxCx2  (C = 5)
-        # labels: Nx5x2
-        # dis_matrix_: NxCx2
-        dis_matrix_ = xy_mat-labels.numpy()
-        dis_matrix_ *= dis_matrix_
-        _,C,_=xy_mat.shape
-
-        # print(dis_matrix_)
-
-
-        # print("Before:{}".format(dis_matrix_.shape))
-        dis_matrix_ = np.sum(dis_matrix_,axis=2)  #dis_matrix_.shape = (N,C)
-        avg_dis = 1.0*np.sum(dis_matrix_,axis=1)/C #avg_dis.shape = (N,1)
-        # print("After:{}".format(avg_dis.shape))
-
-        std_dis = np.std(dis_matrix_,axis=1)  #std_dis.shape = (N,1)
-
-        # print(avg_dis+std_dis)
-
-        return avg_dis+std_dis
 
     #===================================================================================================================
     #================================================ Public Functions =================================================
@@ -389,8 +290,8 @@ class Trainer(TrainerBase):
             "val": self.dataset(os.path.join(self.args.data_dir, self.args.dataset_name, 'val.txt'))} #TODO: Provided a sample of dataset class
 
         # Set heatmaps' pattern
-        pattern, w, h = self.dataset_dict["train"].getinfo()
-        self.heatmap_pattern = Heatmap(pattern=pattern, w=w, h=h)
+        self.hm_pattern, w, h = self.dataset_dict["train"].getinfo()
+        self.heatmaper = Heatmap(pattern=self.hm_pattern, w=w, h=h)
 
 
         # Load Data
@@ -517,17 +418,18 @@ class Trainer(TrainerBase):
         # Set the model to device(CPU/GPU)
         self.model.to(self.device)  # self.model.cuda()
 
-        # Set the criterion
-        self.criterion = FocalLoss_BCE_2d()
+        # Set the criterions
+        self.heatmap_criterion = FocalLoss_BCE_2d()
+        self.landmark_criterion = nn.MSELoss()
 
 
         # Set the parameters of saving strategy #TODO:Need to modify
-        self.best_dist = 10.0
-        self.best_dist_scale = 0.01  #Used in Full-Conv
-        self.save_list = Save_Handle(max_num=self.args.max_model_num)
-        self.avr_kpdist = np.array([0.0,0.0,0.0,0.0,0.0])
-        self.count_kpdist = 0
-        self.best_loss = 300.0
+        # self.best_dist = 10.0
+        # self.best_dist_scale = 0.01  #Used in Full-Conv
+        # self.save_list = Save_Handle(max_num=self.args.max_model_num)
+        # self.avr_kpdist = np.array([0.0,0.0,0.0,0.0,0.0])
+        # self.count_kpdist = 0
+        # self.best_loss = 300.0
 
 
 

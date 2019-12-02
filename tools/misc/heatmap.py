@@ -261,4 +261,3 @@ class Heatmap(HeatmapPattern):
                 points = self.matchmethod(points, targets[n], self.pattern[hmap_idx])
                 output_points_tensor[-1].append(points)
         return torch.FloatTensor(output_points_tensor)
-
