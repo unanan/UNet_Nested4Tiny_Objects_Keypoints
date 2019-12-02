@@ -21,6 +21,7 @@ from torch import optim
 from torch import nn
 
 from trainer.trainer_base import TrainerBase
+from tools.misc.heatmap import Heatmap
 from tools.misc.helper import create_heatmap, Save_Handle, AverageMeter
 from tools.misc import sampler
 from tools.losses.focal_loss import FocalLoss_BCE_2d
@@ -29,7 +30,6 @@ import datasets
 
 # Add the parent folder to sys.path
 # sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-
 
 class Trainer(TrainerBase):
     '''
@@ -93,13 +93,8 @@ class Trainer(TrainerBase):
 
         # Parameters to print
         step_loss = AverageMeter()
-        # step_acc = AverageMeter()
         epoch_loss = AverageMeter()
-        # epoch_acc = AverageMeter()
-
-
         epoch_start = time.time()
-
 
         # Set model to training mode
         self.model.train()
@@ -111,7 +106,7 @@ class Trainer(TrainerBase):
         for step_idx, (inputs, labels) in enumerate(self.dataloaders['train']):
             step_start = time.time()
 
-            inputs, labels =  inputs.to(self.device), labels.to(self.device)
+            inputs, labels = inputs.to(self.device), labels.to(self.device)
 
             # Experimental step of encoding the image before training
             # inputs = self.rbm.sample_hidden(inputs)
@@ -141,8 +136,6 @@ class Trainer(TrainerBase):
                     self.optimizer.step()
 
                 else:
-                    # logging.info("One output after forwarding")
-
                     # Produce target heatmap
                     _, _, H, W = outputs.shape
                     target = torch.from_numpy(create_heatmap(labels.cpu(), H, W))
@@ -165,15 +158,10 @@ class Trainer(TrainerBase):
                         except:
                             logging.warning("No visdom server running.")
 
-                # TODO: Need to check
-                # step_acc.update(np.mean((torch.max(out,1)[1]== labels.data.long()).detach().cpu().numpy().astype(np.float32))
-                #                 , inputs.size(0))
-
                 # Log step training info on terminal
                 if step_idx % self.log_step == 0:
                     temp_time = time.time()
                     train_elap = temp_time - step_start
-                    step_start = temp_time
                     batch_elap = train_elap / self.log_step if step_idx != 0 else train_elap
                     samples_per_s = 1.0 * step_loss.get_count() / train_elap
 
@@ -184,11 +172,8 @@ class Trainer(TrainerBase):
                         'avg-{:.4f}, '                             .format(step_loss.get_avg())+
                         '{:.1f} examples/sec {:.2f} sec/batch'     .format(samples_per_s, batch_elap))
                     step_loss.reset()
-                    # step_acc.reset()
 
                 epoch_loss.update(avgloss.item(), inputs.size(0))
-                # epoch_acc.update(np.mean((preds == labels.data).detach().cpu().numpy().astype(np.float32))
-                #                 , inputs.size(0))
 
         # Log epoch training info on terminal
         logging.info(
@@ -196,14 +181,7 @@ class Trainer(TrainerBase):
             'Epoch Loss: {:.4f} , ' .format(epoch_loss.get_avg())+
             'Cost {:.1f} sec'       .format(time.time() - epoch_start))
 
-
-        # model_state_dic = self.model.module.state_dict() if self.device_count > 1 else self.model.state_dict()
-        #
-        # if epoch_loss.get_avg() < self.best_loss:
-        #     self.best_loss = epoch_loss.get_avg()
-        #     logging.info("Save best loss model epoch {}".format(epoch))
-        #     torch.save(model_state_dic, os.path.join(self.save_dir, 'best_loss-{}_model.pth'.format(self.best_loss)))
-        #
+        return
 
 
     def val_epoch_(self, epoch):
@@ -214,7 +192,9 @@ class Trainer(TrainerBase):
         :return:
         '''
 
-        epoch_start = time.time()
+        val_start = time.time()
+
+        # Set model to validating mode
         self.model.eval()
 
         dist_mat1 = np.array([])
@@ -222,11 +202,22 @@ class Trainer(TrainerBase):
         dist_mat3 = np.array([])
         dist_mat4 = np.array([])
         for inputs, labels in self.dataloaders['val']:
-            # inputs = inputs.to(self.device)
-            inputs = inputs.cuda()
+            inputs = inputs.to(self.device)
+
+            # Forward
             with torch.set_grad_enabled(False):
-                fin1,fin2,fin3 = self.model(inputs) #,fin4
-                N,C,H,W = fin1.shape
+                outputs = self.model(inputs)
+
+            if isinstance(outputs,list):
+                _,_,H,W = outputs[0].shape
+
+                # Check with heatmap loss
+                target = torch.from_numpy(self.heatmap_pattern.create_heatmap(labels.cpu())) #create_heatmap(labels.cpu(),H,W)
+                heatmap_loss = 0
+
+                # Check with landmark(coordinates) loss
+                landmark_loss = 0
+
 
 
                 #N,C,H,W
@@ -252,24 +243,21 @@ class Trainer(TrainerBase):
         avg3 = np.sum(dist_mat3) / (dist_mat3.shape[0]+1)
         # avg4 = np.sum(dist_mat3) / (dist_mat3.shape[0]+1)
 
+        # Log validating info on terminal
         logging.info("Avg: (1)-{} (2)-{} (3)-{}".format(avg1,avg2,avg3)) # (4)-{} ,avg4
 
-        model_state_dic = self.model.module.state_dict() if self.device_count > 1 else self.model.state_dict()
 
+        model_state_dic = self.model.module.state_dict() if self.device_count > 1 else self.model.state_dict()
+        # Model Saving Strategy
+        if self.model_save == "last":
+            logging.info("Save best model.".format(epoch, avg3))
+            torch.save(model_state_dic, os.path.join(self.save_dir, 'best_epoch_{}_heatmaploss_{}_landmarkloss_{}.pth'.format(epoch,heatmap_loss,landmark_loss)))
+        else:  # "average"
+            pass
         if avg3 < self.best_dist:
             self.best_dist = avg3
             logging.info("Save best dist model epoch {}, avg4 distance: {}".format(epoch, avg3))
             torch.save(model_state_dic, os.path.join(self.save_dir, 'best_epoch{}_avg4.pth'.format(epoch)))
-
-        # if avg2 < self.best_dist:
-        #     self.best_dist = avg2
-        #     logging.info("save best dist model epoch {}, avg2 distance: {}".format(epoch, avg2))
-        #     torch.save(model_state_dic, os.path.join(self.save_dir, 'best_epoch{}_avg2.pth'.format(epoch)))
-        #
-        # if avg1 < self.best_dist:
-        #     self.best_dist = avg1
-        #     logging.info("save best dist model epoch {}, avg1 distance: {}".format(epoch, avg1))
-        #     torch.save(model_state_dic, os.path.join(self.save_dir, 'best_epoch{}_avg1.pth'.format(epoch)))
 
 
     def cal_dist_fc(self,outs, labels):
@@ -315,6 +303,14 @@ class Trainer(TrainerBase):
         #     self.best_dist = sum_dist
         #     logging.info("save best dist model epoch {}, sum distance: {}".format(epoch,sum_dist))
         #     torch.save(model_state_dic, os.path.join(self.save_dir, 'best_acc_model.pth'))
+
+
+    def cal_heatmap_loss(self,):
+        pass
+
+
+    def cal_landmark_loss(self,):
+        pass
 
 
     def cal_pos(self, mat):
@@ -369,10 +365,12 @@ class Trainer(TrainerBase):
         :return:
         '''
 
+        # Misc Settings
         self.log_step = self.args.log_step
 
         self.need_visualize = self.args.visualize
         self.vis_epoch = self.args.vis_epoch
+
 
         # Set Gpu(s)
         if torch.cuda.is_available():
@@ -385,10 +383,14 @@ class Trainer(TrainerBase):
 
 
         # Get dataset's Class   Tutorial: https://pytorch.org/tutorials/beginner/data_loading_tutorial.html
-        self.dataset_item = getattr(datasets, self.args.dataset_name)
+        self.dataset = getattr(datasets, self.args.dataset_name)
         self.dataset_dict = {
-            "train": self.dataset_item(os.path.join(self.args.data_dir, self.args.dataset_name, 'train.txt')),
-            "val": self.dataset_item(os.path.join(self.args.data_dir, self.args.dataset_name, 'val.txt'))} #TODO: Provided a sample of dataset class
+            "train": self.dataset(os.path.join(self.args.data_dir, self.args.dataset_name, 'train.txt')),
+            "val": self.dataset(os.path.join(self.args.data_dir, self.args.dataset_name, 'val.txt'))} #TODO: Provided a sample of dataset class
+
+        # Set heatmaps' pattern
+        pattern, w, h = self.dataset_dict["train"].getinfo()
+        self.heatmap_pattern = Heatmap(pattern=pattern, w=w, h=h)
 
 
         # Load Data
@@ -490,6 +492,7 @@ class Trainer(TrainerBase):
 
         # Resuming previous training by loading weights
         self.start_epoch = 0
+        self.model_save = self.args.model_save
         self.max_epoch = self.args.max_epoch
         if self.args.resume:
             suf = self.args.resume.rsplit('.', 1)[-1]
@@ -525,6 +528,8 @@ class Trainer(TrainerBase):
         self.avr_kpdist = np.array([0.0,0.0,0.0,0.0,0.0])
         self.count_kpdist = 0
         self.best_loss = 300.0
+
+
 
         self.SETUPFINISH = True
         return

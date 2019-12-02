@@ -28,10 +28,11 @@ def parse_args():
     parser.add_argument('--batch-size',   default=660, type=int, help='input batch size.')
     parser.add_argument('--num-workers',  default=24,  type=int, help='the num of training process')
 
-    # Dataset Configs
+    # Dataset & Weights Configs
     parser.add_argument('--data-dir',     default='./datasets', help='datasets directory')
-    parser.add_argument('--save-dir',     default='./weights',  help='directory to save model.')
     parser.add_argument('--data-sampler', default='',           help='data sampler when create DataLoader' )
+    parser.add_argument('--save-dir',     default='./weights',  help='directory to save model.')
+    parser.add_argument('--model-save',   default='last',       help="last/average If 'last', save if the last net's loss < best loss")
 
     # Training Configs
     parser.add_argument('--optimizer',    default='adamw',              help='the optimizer method')
