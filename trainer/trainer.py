@@ -241,8 +241,12 @@ class Trainer(TrainerBase):
 
         # Weights Saving Strategy
         if self.model_save == "last":
-            logging.info("Save best model.")
-            torch.save(model_state_dic, os.path.join(self.save_dir, 'best_epoch_{}_heatmaploss_{}_landmarkloss_{}.pth'.format(epoch,epoch_heatmap_loss.get_avg(),epoch_landmark_loss.get_avg())))
+            if epoch_heatmap_loss.get_avg()<self.lastbest_heatmaploss or epoch_landmark_loss.get_avg()<self.lastbest_landmarkloss:
+                logging.info("Save best model.")
+                torch.save(model_state_dic, os.path.join(
+                    self.save_dir,
+                    'best_epoch_{}_heatmaploss_{}_landmarkloss_{}.pth'.format(
+                        epoch,epoch_heatmap_loss.get_avg(),epoch_landmark_loss.get_avg())))
         else:  # "average"
             pass
             raise NotImplementedError("Weights saving strategy 'average' is not implemented")
@@ -424,13 +428,8 @@ class Trainer(TrainerBase):
 
 
         # Set the parameters of saving strategy #TODO:Need to modify
-        # self.best_dist = 10.0
-        # self.best_dist_scale = 0.01  #Used in Full-Conv
-        # self.save_list = Save_Handle(max_num=self.args.max_model_num)
-        # self.avr_kpdist = np.array([0.0,0.0,0.0,0.0,0.0])
-        # self.count_kpdist = 0
-        # self.best_loss = 300.0
-
+        self.lastbest_heatmaploss = 10
+        self.lastbest_landmarkloss = 10
 
 
         self.SETUPFINISH = True
