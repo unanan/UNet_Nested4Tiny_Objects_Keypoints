@@ -11,6 +11,8 @@ Keypoints Detection of tiny objects with UNet_Nested(UNet++), based on PyTorch1.
 
 - Task: Detect keypoints of tiny objects, with high-speed inference & tiny weights file(2.2MB).
 
+- **Remarks: Be freely to take the specific codes in this repo which are needed in your program.
+
 
 ### Requirements
 
