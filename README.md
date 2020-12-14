@@ -40,4 +40,3 @@ Keypoints Detection of tiny objects with UNet_Nested(UNet++), based on PyTorch1.
 
 ### TODO
 
-Not finished yet.
