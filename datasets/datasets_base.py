@@ -31,7 +31,7 @@ class DatasetsBase(data.Dataset):
     def setup(self):
         '''
         - When overriding: Read the file of the datasets, and load into the object
-        - Alarm: Please call 'super' method at the end of the override method
+        - **Alarm: Please call 'super' method at the end of the override method
         '''
         if not isinstance(self.data, list):
             raise TypeError("DatasetsBase: 'self.data' should be 'list'.")
